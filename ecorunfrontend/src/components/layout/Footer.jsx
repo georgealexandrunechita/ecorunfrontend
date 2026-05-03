@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Activity, GitBranch, MessageCircle, Camera } from 'lucide-react'
+import { GitBranch, MessageCircle, Camera } from 'lucide-react'
 
 
 const columns = [
@@ -39,12 +39,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Activity className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-white text-lg">
-                Eco<span className="text-blue-400">Run</span>
-              </span>
+              <img src="https://res.cloudinary.com/dcp7o3atw/image/upload/v1777834701/ecorunlogo.png" alt="EcoRun" className="h-8 w-auto" />
             </Link>
             <p className="text-gray-500 text-sm leading-relaxed mb-4">
               Corre por Sevilla, cuida el planeta.<br />

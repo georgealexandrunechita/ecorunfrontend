@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, Lock, Activity, Leaf, Trophy, Zap } from 'lucide-react'
+import { Mail, Lock, Leaf, Trophy, Zap } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
@@ -54,10 +54,7 @@ export default function Login() {
         <div className="absolute inset-0 bg-gradient-to-br from-dark-900/90 via-dark-900/70 to-blue-900/40" />
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
-              <Activity className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-white">Eco<span className="text-blue-400">Run</span></span>
+            <img src="https://res.cloudinary.com/dcp7o3atw/image/upload/v1777834701/ecorunlogo.png" alt="EcoRun" className="h-10 w-auto" />
           </Link>
 
           <div>
@@ -108,10 +105,7 @@ export default function Login() {
         >
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Activity className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white">Eco<span className="text-blue-400">Run</span></span>
+            <img src="https://res.cloudinary.com/dcp7o3atw/image/upload/v1777834701/ecorunlogo.png" alt="EcoRun" className="h-9 w-auto" />
           </div>
 
           <div className="mb-8">
