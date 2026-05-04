@@ -4,28 +4,28 @@ import { GitBranch, MessageCircle, Camera } from 'lucide-react'
 
 const columns = [
   {
-    title: 'Producto',
+    title: 'Product',
     links: [
-      { label: 'Retos', to: '/challenges' },
-      { label: 'Mapa', to: '/map' },
+      { label: 'Challenges', to: '/challenges' },
+      { label: 'Map', to: '/map' },
       { label: 'Ranking', to: '/dashboard' },
-      { label: 'EcoPuntos', to: '/dashboard' },
+      { label: 'EcoPoints', to: '/dashboard' },
     ],
   },
   {
-    title: 'Empresa',
+    title: 'Company',
     links: [
-      { label: 'Sobre nosotros', to: '/about' },
+      { label: 'About us', to: '/about' },
       { label: 'Blog', to: '/blog' },
-      { label: 'Prensa', to: '/press' },
-      { label: 'Contacto', to: '/contact' },
+      { label: 'Press', to: '/press' },
+      { label: 'Contact', to: '/contact' },
     ],
   },
   {
     title: 'Legal',
     links: [
-      { label: 'Privacidad', to: '/privacy' },
-      { label: 'Términos', to: '/terms' },
+      { label: 'Privacy', to: '/privacy' },
+      { label: 'Terms', to: '/terms' },
       { label: 'Cookies', to: '/cookies' },
     ],
   },
@@ -42,8 +42,8 @@ export default function Footer() {
               <img src="https://res.cloudinary.com/dcp7o3atw/image/upload/v1777834701/ecorunlogo.png" alt="EcoRun" className="h-8 w-auto" />
             </Link>
             <p className="text-gray-500 text-sm leading-relaxed mb-4">
-              Corre por Sevilla, cuida el planeta.<br />
-              Gamificación + sostenibilidad para runners.
+              Run through Seville, protect the planet.<br />
+              Gamification + sustainability for runners.
             </p>
             <div className="flex items-center gap-3">
               <a href="#" className="w-8 h-8 bg-dark-600 hover:bg-dark-500 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all">
@@ -80,10 +80,10 @@ export default function Footer() {
 
         <div className="border-t border-dark-500 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-sm text-gray-600">
-            © 2025 EcoRun Sevilla. Todos los derechos reservados.
+            © 2025 EcoRun Seville. All rights reserved.
           </p>
           <p className="text-sm text-gray-600 flex items-center gap-1">
-            Hecho con <span className="text-blue-500">♥</span> para corredores eco-conscientes
+            Made with <span className="text-blue-500">♥</span> for eco-conscious runners
           </p>
         </div>
       </div>

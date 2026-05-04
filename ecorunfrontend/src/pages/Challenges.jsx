@@ -6,13 +6,13 @@ import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
 
-const ZONES = ['Todas', 'Norte', 'Sur', 'Centro', 'Triana', 'Este']
-const TYPES = ['Todos', 'ruta', 'sprint', 'maratón']
+const ZONES = ['All', 'Norte', 'Sur', 'Centro', 'Triana', 'Este']
+const TYPES = ['All', 'route', 'sprint', 'marathon']
 
 const statusConfig = {
-  in_progress: { label: 'En curso', variant: 'blue' },
-  completed: { label: 'Completado', variant: 'green' },
-  available: { label: 'Disponible', variant: 'gray' },
+  in_progress: { label: 'In progress', variant: 'blue' },
+  completed: { label: 'Completed', variant: 'green' },
+  available: { label: 'Available', variant: 'gray' },
 }
 
 function ChallengeCard({ challenge, index }) {
@@ -53,7 +53,7 @@ function ChallengeCard({ challenge, index }) {
       <div className="grid grid-cols-3 gap-2">
         <div className="text-center bg-dark-800/60 rounded-xl p-2">
           <div className="text-sm font-bold text-white">{challenge.distance} km</div>
-          <div className="text-xs text-gray-600">Distancia</div>
+          <div className="text-xs text-gray-600">Distance</div>
         </div>
         <div className="text-center bg-dark-800/60 rounded-xl p-2">
           <div className="text-sm font-bold text-yellow-400">{challenge.ecoPoints}</div>
@@ -69,7 +69,7 @@ function ChallengeCard({ challenge, index }) {
       {challenge.status !== 'available' && (
         <div>
           <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-            <span>Progreso</span>
+            <span>Progress</span>
             <span>{challenge.progress}%</span>
           </div>
           <ProgressBar
@@ -87,11 +87,11 @@ function ChallengeCard({ challenge, index }) {
         className="mt-auto"
       >
         {challenge.status === 'completed' ? (
-          <>Ver resumen <ChevronRight className="w-4 h-4" /></>
+          <>View summary <ChevronRight className="w-4 h-4" /></>
         ) : challenge.status === 'in_progress' ? (
-          <>Continuar reto <ChevronRight className="w-4 h-4" /></>
+          <>Continue <ChevronRight className="w-4 h-4" /></>
         ) : (
-          <>Iniciar reto <Zap className="w-4 h-4" /></>
+          <>Start challenge <Zap className="w-4 h-4" /></>
         )}
       </Button>
     </motion.div>
@@ -100,15 +100,15 @@ function ChallengeCard({ challenge, index }) {
 
 export default function Challenges() {
   const [search, setSearch] = useState('')
-  const [zone, setZone] = useState('Todas')
-  const [type, setType] = useState('Todos')
+  const [zone, setZone] = useState('All')
+  const [type, setType] = useState('All')
 
   const filtered = useMemo(() => {
     return mockChallenges.filter((c) => {
       const matchSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
         c.location.toLowerCase().includes(search.toLowerCase())
-      const matchZone = zone === 'Todas' || c.zone === zone
-      const matchType = type === 'Todos' || c.type === type
+      const matchZone = zone === 'All' || c.zone === zone
+      const matchType = type === 'All' || c.type === type
       return matchSearch && matchZone && matchType
     })
   }, [search, zone, type])
@@ -126,9 +126,9 @@ export default function Challenges() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <p className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-2">Retos</p>
-          <h1 className="text-4xl font-black text-white mb-3">Lista de Retos</h1>
-          <p className="text-gray-400">Descubre y completa rutas por toda Sevilla</p>
+          <p className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-2">Challenges</p>
+          <h1 className="text-4xl font-black text-white mb-3">Challenge List</h1>
+          <p className="text-gray-400">Discover and complete routes all across Seville</p>
         </motion.div>
 
         {/* Filters */}
@@ -144,7 +144,7 @@ export default function Challenges() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="text"
-                placeholder="Buscar reto o ubicación..."
+                placeholder="Search challenge or location..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full bg-dark-600 border border-dark-400 text-white placeholder-gray-600 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
@@ -175,7 +175,7 @@ export default function Challenges() {
               className="bg-dark-600 border border-dark-400 text-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all cursor-pointer"
             >
               {TYPES.map((t) => (
-                <option key={t} value={t}>{t === 'Todos' ? 'Tipo: Todos' : t}</option>
+                <option key={t} value={t}>{t === 'All' ? 'Type: All' : t}</option>
               ))}
             </select>
           </div>
@@ -184,12 +184,12 @@ export default function Challenges() {
         {/* Results count */}
         <div className="flex items-center justify-between mb-5">
           <p className="text-sm text-gray-500">
-            <span className="text-white font-semibold">{filtered.length}</span> retos encontrados
+            <span className="text-white font-semibold">{filtered.length}</span> challenges found
           </p>
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <Filter className="w-3.5 h-3.5" />
-            {zone !== 'Todas' && <Badge variant="blue">{zone}</Badge>}
-            {type !== 'Todos' && <Badge variant="gray">{type}</Badge>}
+            {zone !== 'All' && <Badge variant="blue">{zone}</Badge>}
+            {type !== 'All' && <Badge variant="gray">{type}</Badge>}
           </div>
         </div>
 
@@ -203,12 +203,12 @@ export default function Challenges() {
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="text-5xl mb-4">🏃</div>
-            <h3 className="text-xl font-bold text-white mb-2">No hay retos</h3>
+            <h3 className="text-xl font-bold text-white mb-2">No challenges</h3>
             <p className="text-gray-500 text-sm max-w-sm">
-              No encontramos retos con esos filtros. Prueba con otros parámetros.
+              No challenges found with those filters. Try different parameters.
             </p>
-            <Button variant="ghost" size="sm" className="mt-4" onClick={() => { setSearch(''); setZone('Todas'); setType('Todos') }}>
-              Limpiar filtros
+            <Button variant="ghost" size="sm" className="mt-4" onClick={() => { setSearch(''); setZone('All'); setType('All') }}>
+              Clear filters
             </Button>
           </div>
         )}
@@ -217,10 +217,10 @@ export default function Challenges() {
         <div className="bg-dark-700 border border-dark-500 rounded-2xl p-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: Zap, label: 'Retos activos', value: activeCount, color: 'text-blue-400' },
-              { icon: Users, label: 'Runners participando', value: totalParticipants.toLocaleString(), color: 'text-emerald-400' },
-              { icon: Trophy, label: 'Completados (tú)', value: mockChallenges.filter(c => c.status === 'completed').length, color: 'text-yellow-400' },
-              { icon: MapPin, label: 'Zonas de Sevilla', value: ZONES.length - 1, color: 'text-orange-400' },
+              { icon: Zap, label: 'Active challenges', value: activeCount, color: 'text-blue-400' },
+              { icon: Users, label: 'Participating runners', value: totalParticipants.toLocaleString(), color: 'text-emerald-400' },
+              { icon: Trophy, label: 'Completed (you)', value: mockChallenges.filter(c => c.status === 'completed').length, color: 'text-yellow-400' },
+              { icon: MapPin, label: 'Seville zones', value: ZONES.length - 1, color: 'text-orange-400' },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center gap-3">
                 <stat.icon className={`w-5 h-5 ${stat.color} flex-shrink-0`} />

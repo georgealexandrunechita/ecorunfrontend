@@ -34,7 +34,7 @@ export default function Home() {
               className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-600/40 text-blue-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-6"
             >
               <Leaf className="w-3 h-3" />
-              Running eco-sostenible en Sevilla
+              Eco-sustainable running in Seville
             </motion.div>
 
             <motion.h1
@@ -58,8 +58,8 @@ export default function Home() {
               variants={fadeUp}
               className="text-gray-300 text-xl leading-relaxed mb-10 max-w-xl"
             >
-              Corre por Sevilla, gana EcoPuntos y marca la diferencia.
-              Cada paso tuyo planta un árbol y reduce CO₂ en tu ciudad.
+              Run through Seville, earn EcoPoints and make a difference.
+              Every step you take plants a tree and reduces CO₂ in your city.
             </motion.p>
 
             <motion.div
@@ -71,20 +71,20 @@ export default function Home() {
             >
               <Link to="/register">
                 <Button size="lg" className="shadow-blue-glow">
-                  Empieza ahora
+                  Start now
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
               <Link to="/challenges">
                 <Button variant="ghost" size="lg">
                   <Trophy className="w-4 h-4" />
-                  Últimas Carreras
+                  Latest Runs
                 </Button>
               </Link>
               <Link to="/dashboard">
                 <Button variant="ghost" size="lg">
                   <Leaf className="w-4 h-4" />
-                  EcoPuntos
+                  EcoPoints
                 </Button>
               </Link>
             </motion.div>
@@ -102,10 +102,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { label: 'Runners activos', value: mockStats.activeRunners.toLocaleString(), icon: Users, suffix: '' },
-              { label: 'Árboles salvados', value: mockStats.treesSaved.toLocaleString(), icon: Leaf, suffix: '' },
-              { label: 'kg CO₂ evitado', value: mockStats.co2Avoided.toLocaleString(), icon: TrendingUp, suffix: 'kg' },
-              { label: 'Rutas en Sevilla', value: mockStats.sevillaRoutes, icon: Map, suffix: '' },
+              { label: 'Active runners', value: mockStats.activeRunners.toLocaleString(), icon: Users, suffix: '' },
+              { label: 'Trees saved', value: mockStats.treesSaved.toLocaleString(), icon: Leaf, suffix: '' },
+              { label: 'kg CO₂ avoided', value: mockStats.co2Avoided.toLocaleString(), icon: TrendingUp, suffix: 'kg' },
+              { label: 'Seville routes', value: mockStats.sevillaRoutes, icon: Map, suffix: '' },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -137,13 +137,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-4 block">¿Por qué EcoRun?</span>
+            <span className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-4 block">Why EcoRun?</span>
             <h2 className="text-4xl md:text-5xl font-black text-white mb-5">
-              Corre diferente.<br />
-              <span className="text-blue-400">Marca la diferencia.</span>
+              Run different.<br />
+              <span className="text-blue-400">Make a difference.</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              No es solo correr. Es contribuir a una Sevilla más verde, conectar con otros runners y ganar recompensas reales.
+              It's not just running. It's contributing to a greener Seville, connecting with other runners and earning real rewards.
             </p>
           </motion.div>
 
@@ -151,22 +151,22 @@ export default function Home() {
             {[
               {
                 icon: Leaf,
-                title: 'Impacto Eco Real',
-                desc: 'Cada kilómetro que corres se traduce en árboles plantados y CO₂ evitado. Tu actividad física tiene impacto medioambiental real en Sevilla.',
+                title: 'Real Eco Impact',
+                desc: 'Every kilometer you run translates into trees planted and CO₂ avoided. Your physical activity has a real environmental impact in Seville.',
                 color: 'text-emerald-400',
                 bg: 'bg-emerald-500/10 border-emerald-500/20',
               },
               {
                 icon: Trophy,
-                title: 'Gamificación Total',
-                desc: 'Gana EcoPuntos, desbloquea logros, sube de nivel y compite en el ranking de Sevilla. Cada sesión es una oportunidad de mejorar.',
+                title: 'Full Gamification',
+                desc: 'Earn EcoPoints, unlock achievements, level up and compete in the Seville ranking. Every session is an opportunity to improve.',
                 color: 'text-yellow-400',
                 bg: 'bg-yellow-500/10 border-yellow-500/20',
               },
               {
                 icon: Zap,
-                title: 'Retos Urbanos',
-                desc: 'Rutas diseñadas por zonas de Sevilla con retos semanales y mensuales. Descubre la ciudad corriendo y comparte tus logros.',
+                title: 'Urban Challenges',
+                desc: 'Routes designed across Seville zones with weekly and monthly challenges. Discover the city while running and share your achievements.',
                 color: 'text-blue-400',
                 bg: 'bg-blue-500/10 border-blue-500/20',
               },
@@ -199,14 +199,14 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-14"
           >
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Cómo funciona</h2>
-            <p className="text-gray-400 max-w-xl mx-auto">En 3 pasos empieza a correr y a mejorar Sevilla</p>
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">How it works</h2>
+            <p className="text-gray-400 max-w-xl mx-auto">In 3 steps, start running and improving Seville</p>
           </motion.div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: '01', title: 'Crea tu cuenta', desc: 'Regístrate gratis y configura tu perfil de runner eco-consciente.' },
-              { step: '02', title: 'Elige un reto', desc: 'Explora los retos por zona de Sevilla y elige el que más te motive.' },
-              { step: '03', title: 'Corre y gana', desc: 'Completa el reto, acumula EcoPuntos y sube en el ranking de Sevilla.' },
+              { step: '01', title: 'Create your account', desc: 'Sign up for free and set up your eco-conscious runner profile.' },
+              { step: '02', title: 'Choose a challenge', desc: 'Explore challenges across Seville zones and pick the one that motivates you most.' },
+              { step: '03', title: 'Run and earn', desc: 'Complete the challenge, accumulate EcoPoints and climb the Seville ranking.' },
             ].map((item, i) => (
               <motion.div
                 key={item.step}
@@ -240,22 +240,22 @@ export default function Home() {
             <div className="relative z-10">
               <Shield className="w-12 h-12 text-blue-400 mx-auto mb-6" />
               <h2 className="text-4xl md:text-5xl font-black text-white mb-5">
-                Únete a la revolución<br />
-                <span className="text-blue-400">eco-deportiva</span>
+                Join the revolution<br />
+                <span className="text-blue-400">eco-sports</span>
               </h2>
               <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
-                Más de 1.800 runners en Sevilla ya están corriendo por un mundo mejor. ¿Y tú?
+                Over 1,800 runners in Seville are already running for a better world. What about you?
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/register">
                   <Button size="lg" className="shadow-blue-glow">
-                    Empieza gratis hoy
+                    Start for free today
                     <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
                 <Link to="/challenges">
                   <Button variant="secondary" size="lg">
-                    Ver todos los retos
+                    View all challenges
                   </Button>
                 </Link>
               </div>

@@ -19,15 +19,15 @@ export default function Register() {
 
   const validate = () => {
     const e = {}
-    if (!form.name.trim()) e.name = 'El nombre es obligatorio'
-    if (!form.surname.trim()) e.surname = 'El apellido es obligatorio'
-    if (!form.email) e.email = 'El email es obligatorio'
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Email no válido'
-    if (!form.password) e.password = 'La contraseña es obligatoria'
-    else if (form.password.length < 8) e.password = 'Mínimo 8 caracteres'
-    if (!form.confirmPassword) e.confirmPassword = 'Confirma tu contraseña'
-    else if (form.password !== form.confirmPassword) e.confirmPassword = 'Las contraseñas no coinciden'
-    if (!form.terms) e.terms = 'Debes aceptar los términos'
+    if (!form.name.trim()) e.name = 'First name is required'
+    if (!form.surname.trim()) e.surname = 'Last name is required'
+    if (!form.email) e.email = 'Email is required'
+    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email'
+    if (!form.password) e.password = 'Password is required'
+    else if (form.password.length < 8) e.password = 'Minimum 8 characters'
+    if (!form.confirmPassword) e.confirmPassword = 'Please confirm your password'
+    else if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match'
+    if (!form.terms) e.terms = 'You must accept the terms'
     return e
   }
 
@@ -41,7 +41,7 @@ export default function Register() {
       await register({ name: form.name, surname: form.surname, email: form.email, password: form.password })
       navigate('/dashboard')
     } catch (err) {
-      setApiError(err?.message || 'Error al crear la cuenta')
+      setApiError(err?.message || 'Error creating account')
     } finally {
       setLoading(false)
     }
@@ -53,10 +53,10 @@ export default function Register() {
   }
 
   const benefits = [
-    { icon: Trophy, text: 'Accede al ranking de Sevilla' },
-    { icon: Leaf, text: 'Contribuye al planeta en cada km' },
-    { icon: Zap, text: 'Desbloquea retos y logros exclusivos' },
-    { icon: CheckCircle, text: 'Gratis siempre, sin suscripciones' },
+    { icon: Trophy, text: 'Access the Seville ranking' },
+    { icon: Leaf, text: 'Contribute to the planet every km' },
+    { icon: Zap, text: 'Unlock exclusive challenges and achievements' },
+    { icon: CheckCircle, text: 'Always free, no subscriptions' },
   ]
 
   return (
@@ -81,14 +81,14 @@ export default function Register() {
             >
               <div className="inline-flex items-center gap-2 bg-emerald-600/20 border border-emerald-600/30 text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
                 <Leaf className="w-3 h-3" />
-                Únete a la comunidad
+                Join the community
               </div>
               <h2 className="text-4xl font-black text-white leading-tight mb-4">
-                Descubre tu potencial<br />
-                <span className="text-blue-400">ECO-CORREDOR</span>
+                Discover your<br />
+                <span className="text-blue-400">ECO-RUNNER potential</span>
               </h2>
               <p className="text-gray-400 mb-8">
-                Más de 1.800 runners en Sevilla ya están corriendo por el planeta.
+                Over 1,800 runners in Seville are already running for the planet.
               </p>
               <div className="flex flex-col gap-4">
                 {benefits.map(({ icon: Icon, text }) => (
@@ -103,7 +103,7 @@ export default function Register() {
             </motion.div>
           </div>
 
-          <p className="text-gray-600 text-xs">© 2025 EcoRun Sevilla</p>
+          <p className="text-gray-600 text-xs">© 2025 EcoRun Seville</p>
         </div>
       </div>
 
@@ -121,8 +121,8 @@ export default function Register() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-white mb-2">Crear cuenta</h1>
-            <p className="text-gray-400">Empieza gratis en menos de 1 minuto</p>
+            <h1 className="text-3xl font-black text-white mb-2">Create account</h1>
+            <p className="text-gray-400">Get started for free in under 1 minute</p>
           </div>
 
           {apiError && (
@@ -134,8 +134,8 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-4">
               <Input
-                label="Nombre"
-                placeholder="Ana"
+                label="First name"
+                placeholder="Alex"
                 icon={User}
                 value={form.name}
                 onChange={set('name')}
@@ -143,8 +143,8 @@ export default function Register() {
                 autoComplete="given-name"
               />
               <Input
-                label="Apellidos"
-                placeholder="García"
+                label="Last name"
+                placeholder="Smith"
                 value={form.surname}
                 onChange={set('surname')}
                 error={errors.surname}
@@ -155,7 +155,7 @@ export default function Register() {
             <Input
               label="Email"
               type="email"
-              placeholder="tu@email.com"
+              placeholder="you@email.com"
               icon={Mail}
               value={form.email}
               onChange={set('email')}
@@ -164,9 +164,9 @@ export default function Register() {
             />
 
             <Input
-              label="Contraseña"
+              label="Password"
               type="password"
-              placeholder="Mínimo 8 caracteres"
+              placeholder="Minimum 8 characters"
               icon={Lock}
               value={form.password}
               onChange={set('password')}
@@ -175,9 +175,9 @@ export default function Register() {
             />
 
             <Input
-              label="Confirmar contraseña"
+              label="Confirm password"
               type="password"
-              placeholder="Repite la contraseña"
+              placeholder="Repeat password"
               icon={Lock}
               value={form.confirmPassword}
               onChange={set('confirmPassword')}
@@ -194,24 +194,24 @@ export default function Register() {
                   className="w-4 h-4 mt-0.5 rounded border-dark-400 bg-dark-600 accent-blue-500 flex-shrink-0"
                 />
                 <span className="text-sm text-gray-400">
-                  Acepto los{' '}
-                  <Link to="/terms" className="text-blue-400 hover:text-blue-300">Términos de uso</Link>
-                  {' '}y la{' '}
-                  <Link to="/privacy" className="text-blue-400 hover:text-blue-300">Política de privacidad</Link>
+                  I accept the{' '}
+                  <Link to="/terms" className="text-blue-400 hover:text-blue-300">Terms of use</Link>
+                  {' '}and the{' '}
+                  <Link to="/privacy" className="text-blue-400 hover:text-blue-300">Privacy policy</Link>
                 </span>
               </label>
               {errors.terms && <p className="text-xs text-red-400 mt-1">{errors.terms}</p>}
             </div>
 
             <Button type="submit" loading={loading} fullWidth size="lg" className="mt-2">
-              Crear mi cuenta
+              Create my account
             </Button>
           </form>
 
           <p className="text-center text-sm text-gray-500 mt-6">
-            ¿Ya tienes cuenta?{' '}
+            Already have an account?{' '}
             <Link to="/login" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
-              Inicia sesión
+              Sign in
             </Link>
           </p>
         </motion.div>

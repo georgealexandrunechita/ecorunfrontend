@@ -6,12 +6,12 @@ import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
 
-const ZONES = ['Todas', 'Norte', 'Sur', 'Centro', 'Triana', 'Este']
+const ZONES = ['All', 'Norte', 'Sur', 'Centro', 'Triana', 'Este']
 
 const statusConfig = {
-  in_progress: { label: 'En curso', variant: 'blue', dot: 'bg-blue-500' },
-  completed: { label: 'Completado', variant: 'green', dot: 'bg-emerald-500' },
-  available: { label: 'Disponible', variant: 'gray', dot: 'bg-gray-500' },
+  in_progress: { label: 'In progress', variant: 'blue', dot: 'bg-blue-500' },
+  completed: { label: 'Completed', variant: 'green', dot: 'bg-emerald-500' },
+  available: { label: 'Available', variant: 'gray', dot: 'bg-gray-500' },
 }
 
 // Mock map markers positions (% of map container)
@@ -25,10 +25,10 @@ const mapMarkers = [
 ]
 
 export default function ChallengeMap() {
-  const [zone, setZone] = useState('Todas')
+  const [zone, setZone] = useState('All')
   const [selected, setSelected] = useState(null)
 
-  const filtered = mockChallenges.filter(c => zone === 'Todas' || c.zone === zone)
+  const filtered = mockChallenges.filter(c => zone === 'All' || c.zone === zone)
   const selectedChallenge = selected ? mockChallenges.find(c => c.id === selected) : null
 
   return (
@@ -41,9 +41,9 @@ export default function ChallengeMap() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <p className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-2">Mapa</p>
-          <h1 className="text-4xl font-black text-white mb-3">Mapa de Retos</h1>
-          <p className="text-gray-400">Explora los retos disponibles por zonas de Sevilla</p>
+          <p className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-2">Map</p>
+          <h1 className="text-4xl font-black text-white mb-3">Challenge Map</h1>
+          <p className="text-gray-400">Explore available challenges across Seville zones</p>
         </motion.div>
 
         {/* Zone filters */}
@@ -82,12 +82,12 @@ export default function ChallengeMap() {
             <div className="flex items-center justify-between p-4 border-b border-dark-500">
               <div className="flex items-center gap-2">
                 <Navigation className="w-4 h-4 text-blue-400" />
-                <span className="text-sm font-semibold text-white">Sevilla, España</span>
+                <span className="text-sm font-semibold text-white">Seville, Spain</span>
               </div>
               <div className="flex items-center gap-3 text-xs text-gray-500">
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-blue-500 rounded-full" />En curso</div>
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full" />Completado</div>
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-gray-500 rounded-full" />Disponible</div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-blue-500 rounded-full" />In progress</div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full" />Completed</div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-gray-500 rounded-full" />Available</div>
               </div>
             </div>
 
@@ -115,14 +115,14 @@ export default function ChallengeMap() {
 
               {/* City label */}
               <div className="absolute top-4 left-4 bg-dark-900/80 backdrop-blur px-3 py-1.5 rounded-lg">
-                <p className="text-xs text-gray-400 font-medium">Sevilla · Vista satélite simulada</p>
+                <p className="text-xs text-gray-400 font-medium">Seville · Simulated satellite view</p>
               </div>
 
               {/* Map markers */}
               {mapMarkers.map((marker) => {
                 const challenge = mockChallenges.find(c => c.id === marker.id)
                 if (!challenge) return null
-                if (zone !== 'Todas' && challenge.zone !== zone) return null
+                if (zone !== 'All' && challenge.zone !== zone) return null
                 const isSelected = selected === marker.id
                 const dotColor = statusConfig[challenge.status].dot
 
@@ -150,11 +150,11 @@ export default function ChallengeMap() {
               })}
 
               {/* Empty state for zone */}
-              {zone !== 'Todas' && filtered.length === 0 && (
+              {zone !== 'All' && filtered.length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <p className="text-4xl mb-3">🗺️</p>
-                    <p className="text-gray-400 text-sm">Sin retos en esta zona</p>
+                    <p className="text-gray-400 text-sm">No challenges in this zone</p>
                   </div>
                 </div>
               )}
@@ -170,7 +170,7 @@ export default function ChallengeMap() {
           >
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
-                Retos activos · {filtered.length}
+                Active challenges · {filtered.length}
               </h2>
               <Filter className="w-4 h-4 text-gray-500" />
             </div>
@@ -235,7 +235,7 @@ export default function ChallengeMap() {
                       >
                         <p className="text-xs text-gray-400 mb-3">{challenge.description}</p>
                         <Button size="sm" fullWidth>
-                          {challenge.status === 'available' ? 'Iniciar reto' : challenge.status === 'in_progress' ? 'Continuar' : 'Ver resumen'}
+                          {challenge.status === 'available' ? 'Start challenge' : challenge.status === 'in_progress' ? 'Continue' : 'View summary'}
                           <ChevronRight className="w-4 h-4" />
                         </Button>
                       </motion.div>
@@ -256,10 +256,10 @@ export default function ChallengeMap() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: Zap, label: 'Retos activos en Sevilla', value: mockChallenges.filter(c => c.status !== 'completed').length, color: 'text-blue-400' },
-              { icon: Users, label: 'Runners participando', value: '1,840', color: 'text-emerald-400' },
-              { icon: MapPin, label: 'Zonas cubiertas', value: '5 zonas', color: 'text-orange-400' },
-              { icon: Filter, label: 'Filtro activo', value: zone, color: 'text-purple-400' },
+              { icon: Zap, label: 'Active challenges in Seville', value: mockChallenges.filter(c => c.status !== 'completed').length, color: 'text-blue-400' },
+              { icon: Users, label: 'Participating runners', value: '1,840', color: 'text-emerald-400' },
+              { icon: MapPin, label: 'Zones covered', value: '5 zones', color: 'text-orange-400' },
+              { icon: Filter, label: 'Active filter', value: zone, color: 'text-purple-400' },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center gap-3">
                 <stat.icon className={`w-5 h-5 ${stat.color} flex-shrink-0`} />

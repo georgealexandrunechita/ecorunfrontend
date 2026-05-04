@@ -1,13 +1,13 @@
-# EcoRun Sevilla
+# EcoRun Seville
 
-Plataforma gamificada de eco-running social que incentiva el transporte sostenible en Sevilla. Los usuarios acumulan **EcoPuntos** por cada kilómetro recorrido, contribuyendo a reducir emisiones de CO₂ y reforestar el planeta.
+Gamified eco-running social platform that incentivizes sustainable transportation in Seville. Users earn **EcoPoints** for every kilometer run, contributing to reducing CO₂ emissions and reforesting the planet.
 
 ---
 
-## Stack tecnologico
+## Tech stack
 
 ### Frontend
-| Tecnologia | Version |
+| Technology | Version |
 |---|---|
 | React | 19.2.5 |
 | Vite | 8.0.10 |
@@ -18,7 +18,7 @@ Plataforma gamificada de eco-running social que incentiva el transporte sostenib
 | Lucide React | 1.14.0 |
 
 ### Backend
-| Tecnologia | Version |
+| Technology | Version |
 |---|---|
 | Node.js + Express | 5.2.1 |
 | MySQL 2 | 3.16.3 |
@@ -30,41 +30,41 @@ Plataforma gamificada de eco-running social que incentiva el transporte sostenib
 
 ---
 
-## Funcionalidades
+## Features
 
-- **Autenticacion** — Registro e inicio de sesion con JWT y contraseñas cifradas con bcrypt
-- **Seguimiento de carreras** — Registra distancia, duracion, tiempo de inicio/fin y puntos ganados
-- **Sistema de desafios** — Retos por zonas de Sevilla (Norte, Sur, Centro, Triana, Este) con categorias, dificultad y recompensas
-- **Gamificacion** — EcoPuntos, niveles de usuario (1-7+), logros y tabla de clasificacion
-- **Impacto ambiental** — Visualizacion de arboles salvados, CO₂ evitado y kilometros totales
-- **Mapa de desafios** — Vista geografica de los retos activos en Sevilla
+- **Authentication** — Registration and login with JWT and bcrypt-hashed passwords
+- **Run tracking** — Record distance, duration, start/end time and points earned
+- **Challenge system** — Challenges across Seville zones (Norte, Sur, Centro, Triana, Este) with categories, difficulty and rewards
+- **Gamification** — EcoPoints, user levels (1-7+), achievements and leaderboard
+- **Environmental impact** — Visualization of trees saved, CO₂ avoided and total kilometers
+- **Challenge map** — Geographic view of active challenges across Seville
 
 ---
 
-## Estructura del proyecto
+## Project structure
 
 ```
 ecorun/
-├── ecorunfrontend/          # Aplicacion React
+├── ecorunfrontend/          # React application
 │   ├── src/
-│   │   ├── pages/           # Vistas: Home, Login, Register, Dashboard, Challenges, Map
+│   │   ├── pages/           # Views: Home, Login, Register, Dashboard, Challenges, Map
 │   │   ├── components/
 │   │   │   ├── ui/          # Button, Input, Badge, ProgressBar, LoadingSpinner
 │   │   │   ├── layout/      # Navbar, Footer
-│   │   │   └── shared/      # Componentes reutilizables
+│   │   │   └── shared/      # Reusable components
 │   │   ├── layouts/         # PublicLayout, AuthLayout, AppLayout
-│   │   ├── context/         # AuthContext (estado global de autenticacion)
+│   │   ├── context/         # AuthContext (global auth state)
 │   │   ├── services/        # api.js, authService.js, challengeService.js
 │   │   ├── hooks/           # Custom hooks
-│   │   ├── data/            # Mock data para desarrollo
-│   │   └── utils/           # Funciones utilitarias
+│   │   ├── data/            # Mock data for development
+│   │   └── utils/           # Utility functions
 │   ├── vite.config.js
 │   ├── tailwind.config.js
 │   └── package.json
 │
-└── ecorunbackend/           # API REST Node.js
+└── ecorunbackend/           # Node.js REST API
     ├── src/
-    │   ├── config/db.js     # Conexion MySQL (pool de 10 conexiones)
+    │   ├── config/db.js     # MySQL connection (pool of 10 connections)
     │   └── middleware/      # authMiddleware, errorHandler, validation
     ├── models/              # UserModel, RunModel, ChallengeModel
     ├── controllers/         # AuthController, RunController, ChallengeController
@@ -77,11 +77,11 @@ ecorun/
 
 ---
 
-## Instalacion y puesta en marcha
+## Installation and setup
 
-### Requisitos previos
+### Prerequisites
 - Node.js >= 18
-- MySQL >= 8.0
+- MySQL >= 8.0 (database managed locally)
 
 ### 1. Backend
 
@@ -90,7 +90,7 @@ cd ecorunbackend
 npm install
 ```
 
-Crea el archivo `.env` a partir del ejemplo:
+Create the `.env` file from the example:
 
 ```bash
 cp .env.example .env
@@ -103,27 +103,21 @@ FRONTEND_URL=http://localhost:5173
 
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=tu_password
+DB_PASSWORD=your_password
 DB_NAME=ecorun_sevilla
 DB_PORT=3306
 
-JWT_SECRET=cambia_esto_por_un_secreto_seguro
+JWT_SECRET=change_this_to_a_secure_secret
 ```
 
-Crea la base de datos en MySQL:
-
-```sql
-CREATE DATABASE ecorun_sevilla;
-```
-
-Inicia el servidor:
+Start the server:
 
 ```bash
-npm run dev       # desarrollo (nodemon)
-npm start         # produccion
+npm run dev       # development (nodemon)
+npm start         # production
 ```
 
-El servidor arranca en `http://localhost:8080`.
+Server runs at `http://localhost:8080`.
 
 ### 2. Frontend
 
@@ -132,74 +126,74 @@ cd ecorunfrontend
 npm install
 ```
 
-Crea el archivo `.env`:
+Create the `.env` file:
 
 ```env
 VITE_API_URL=http://localhost:8080/api
 ```
 
-Inicia la aplicacion:
+Start the application:
 
 ```bash
 npm run dev
 ```
 
-La app estara disponible en `http://localhost:5173`.
+App available at `http://localhost:5173`.
 
 ---
 
-## Scripts disponibles
+## Available scripts
 
 ### Frontend
-| Comando | Descripcion |
+| Command | Description |
 |---|---|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de produccion |
-| `npm run preview` | Previsualizar build |
-| `npm run lint` | Linting con ESLint |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Lint with ESLint |
 
 ### Backend
-| Comando | Descripcion |
+| Command | Description |
 |---|---|
-| `npm run dev` | Servidor con hot-reload (nodemon) |
-| `npm start` | Servidor de produccion |
-| `npm test` | Ejecutar tests |
-| `npm run test:watch` | Tests en modo watch |
-| `npm run test:coverage` | Informe de cobertura |
+| `npm run dev` | Server with hot-reload (nodemon) |
+| `npm start` | Production server |
+| `npm test` | Run tests |
+| `npm run test:watch` | Tests in watch mode |
+| `npm run test:coverage` | Coverage report |
 
 ---
 
 ## API Endpoints
 
-### Autenticacion — `/api/auth`
-| Metodo | Ruta | Descripcion | Auth |
+### Authentication — `/api/auth`
+| Method | Route | Description | Auth |
 |---|---|---|---|
-| POST | `/register` | Crear cuenta nueva | No |
-| POST | `/login` | Iniciar sesion | No |
+| POST | `/register` | Create new account | No |
+| POST | `/login` | Sign in | No |
 
-### Carreras — `/api/runs`
-| Metodo | Ruta | Descripcion | Auth |
+### Runs — `/api/runs`
+| Method | Route | Description | Auth |
 |---|---|---|---|
-| POST | `/` | Crear carrera | Si |
-| GET | `/user/:userId` | Carreras de un usuario | Si |
-| GET | `/:id` | Detalle de carrera | Si |
-| PUT | `/:id` | Actualizar carrera | Si |
-| DELETE | `/:id` | Eliminar carrera | Si |
+| POST | `/` | Create run | Yes |
+| GET | `/user/:userId` | User's runs | Yes |
+| GET | `/:id` | Run detail | Yes |
+| PUT | `/:id` | Update run | Yes |
+| DELETE | `/:id` | Delete run | Yes |
 
-### Desafios — `/api/challenges`
-| Metodo | Ruta | Descripcion | Auth |
+### Challenges — `/api/challenges`
+| Method | Route | Description | Auth |
 |---|---|---|---|
-| GET | `/` | Listar desafios activos | No |
-| GET | `/:id` | Detalle de desafio | No |
-| GET | `/user/:userId` | Desafios de un usuario | Si |
-| POST | `/:id/join` | Unirse a un desafio | Si |
-| PUT | `/user/:userChallengeId/progress` | Actualizar progreso | Si |
+| GET | `/` | List active challenges | No |
+| GET | `/:id` | Challenge detail | No |
+| GET | `/user/:userId` | User's challenges | Yes |
+| POST | `/:id/join` | Join a challenge | Yes |
+| PUT | `/user/:userChallengeId/progress` | Update progress | Yes |
 
-> La documentacion completa de la API esta disponible en `ecorunbackend/postman_collection.json`.
+> Full API documentation available in `ecorunbackend/postman_collection.json`.
 
 ---
 
-## Base de datos
+## Database
 
 ```
 users
@@ -219,52 +213,52 @@ user_challenges
 
 ---
 
-## Variables de entorno
+## Environment variables
 
 ### Frontend (`.env`)
-| Variable | Descripcion | Valor por defecto |
+| Variable | Description | Default |
 |---|---|---|
-| `VITE_API_URL` | URL base de la API | `http://localhost:3000/api` |
+| `VITE_API_URL` | API base URL | `http://localhost:3000/api` |
 
 ### Backend (`.env`)
-| Variable | Descripcion |
+| Variable | Description |
 |---|---|
-| `PORT` | Puerto del servidor |
-| `NODE_ENV` | Entorno (`development` / `production`) |
-| `FRONTEND_URL` | URL del frontend (CORS) |
-| `DB_HOST` | Host de MySQL |
-| `DB_USER` | Usuario de MySQL |
-| `DB_PASSWORD` | Contrasena de MySQL |
-| `DB_NAME` | Nombre de la base de datos |
-| `DB_PORT` | Puerto de MySQL |
-| `JWT_SECRET` | Secreto para firmar tokens JWT |
+| `PORT` | Server port |
+| `NODE_ENV` | Environment (`development` / `production`) |
+| `FRONTEND_URL` | Frontend URL (CORS) |
+| `DB_HOST` | MySQL host |
+| `DB_USER` | MySQL user |
+| `DB_PASSWORD` | MySQL password |
+| `DB_NAME` | Database name |
+| `DB_PORT` | MySQL port |
+| `JWT_SECRET` | Secret for signing JWT tokens |
 
 ---
 
-## Rutas de la aplicacion
+## Application routes
 
-| Ruta | Vista | Acceso |
+| Route | View | Access |
 |---|---|---|
-| `/` | Home | Publico |
-| `/login` | Inicio de sesion | Solo no autenticado |
-| `/register` | Registro | Solo no autenticado |
-| `/dashboard` | Panel de usuario | Requiere auth |
-| `/challenges` | Lista de desafios | Requiere auth |
-| `/map` | Mapa de desafios | Requiere auth |
+| `/` | Home | Public |
+| `/login` | Sign in | Unauthenticated only |
+| `/register` | Sign up | Unauthenticated only |
+| `/dashboard` | User dashboard | Requires auth |
+| `/challenges` | Challenge list | Requires auth |
+| `/map` | Challenge map | Requires auth |
 
 ---
 
-## Seguridad
+## Security
 
-- Contrasenas cifradas con **bcryptjs**
-- Tokens de sesion con **JWT** (expiracion configurable)
-- Cabeceras HTTP securizadas con **Helmet**
-- Proteccion CORS restringida al frontend
-- Validacion de entrada con **express-validator**
-- Variables sensibles gestionadas por `.env` (nunca en el repositorio)
+- Passwords hashed with **bcryptjs**
+- Session tokens with **JWT** (configurable expiration)
+- HTTP headers secured with **Helmet**
+- CORS protection restricted to the frontend
+- Input validation with **express-validator**
+- Sensitive variables managed by `.env` (never in the repository)
 
 ---
 
-## Licencia
+## License
 
-Proyecto educativo — 2º DAW
+Educational project — 2nd year Web Application Development

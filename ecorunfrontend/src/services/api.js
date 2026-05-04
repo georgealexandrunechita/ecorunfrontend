@@ -24,7 +24,7 @@ api.interceptors.response.use(
       localStorage.removeItem('ecorun_user')
       window.location.href = '/login'
     }
-    return Promise.reject(error.response?.data || { message: 'Error de conexión' })
+    return Promise.reject(error.response?.data || { message: 'Connection error' })
   }
 )
 

@@ -6,10 +6,10 @@ export default function NotFound() {
     <div className="min-h-screen bg-dark-900 flex items-center justify-center px-4">
       <div className="text-center">
         <p className="text-8xl font-black text-blue-600/20 mb-4">404</p>
-        <h1 className="text-3xl font-black text-white mb-3">Página no encontrada</h1>
-        <p className="text-gray-400 mb-8">Esta ruta no existe en EcoRun. ¿Vuelta al inicio?</p>
+        <h1 className="text-3xl font-black text-white mb-3">Page not found</h1>
+        <p className="text-gray-400 mb-8">This route does not exist in EcoRun. Go back home?</p>
         <Link to="/">
-          <Button>Volver al inicio</Button>
+          <Button>Back to home</Button>
         </Link>
       </div>
     </div>

@@ -16,9 +16,9 @@ export default function Login() {
 
   const validate = () => {
     const e = {}
-    if (!form.email) e.email = 'El email es obligatorio'
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Email no válido'
-    if (!form.password) e.password = 'La contraseña es obligatoria'
+    if (!form.email) e.email = 'Email is required'
+    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email'
+    if (!form.password) e.password = 'Password is required'
     return e
   }
 
@@ -32,7 +32,7 @@ export default function Login() {
       await login(form.email, form.password)
       navigate('/dashboard')
     } catch (err) {
-      setApiError(err?.message || 'Email o contraseña incorrectos')
+      setApiError(err?.message || 'Invalid email or password')
     } finally {
       setLoading(false)
     }
@@ -65,20 +65,20 @@ export default function Login() {
             >
               <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-600/30 text-blue-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
                 <Leaf className="w-3 h-3" />
-                Runner Verde
+                Green Runner
               </div>
               <h2 className="text-4xl font-black text-white leading-tight mb-4">
-                Bienvenido de nuevo,<br />
-                <span className="text-blue-400">Runner Verde</span>
+                Welcome back,<br />
+                <span className="text-blue-400">Green Runner</span>
               </h2>
               <p className="text-gray-400 text-lg mb-8">
-                Tus rutas te esperan. Sevilla también.
+                Your routes are waiting. So is Seville.
               </p>
               <div className="flex flex-col gap-3">
                 {[
-                  { icon: Trophy, text: 'Tu ranking te espera' },
-                  { icon: Zap, text: 'Nuevos retos disponibles' },
-                  { icon: Leaf, text: 'Tu impacto eco sigue creciendo' },
+                  { icon: Trophy, text: 'Your ranking awaits' },
+                  { icon: Zap, text: 'New challenges available' },
+                  { icon: Leaf, text: 'Your eco impact keeps growing' },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex items-center gap-3 text-gray-300 text-sm">
                     <div className="w-7 h-7 bg-blue-600/20 rounded-lg flex items-center justify-center">
@@ -91,7 +91,7 @@ export default function Login() {
             </motion.div>
           </div>
 
-          <p className="text-gray-600 text-xs">© 2025 EcoRun Sevilla</p>
+          <p className="text-gray-600 text-xs">© 2025 EcoRun Seville</p>
         </div>
       </div>
 
@@ -109,8 +109,8 @@ export default function Login() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-white mb-2">Iniciar sesión</h1>
-            <p className="text-gray-400">Accede a tu cuenta de EcoRun</p>
+            <h1 className="text-3xl font-black text-white mb-2">Sign in</h1>
+            <p className="text-gray-400">Access your EcoRun account</p>
           </div>
 
           {apiError && (
@@ -123,7 +123,7 @@ export default function Login() {
             <Input
               label="Email"
               type="email"
-              placeholder="tu@email.com"
+              placeholder="you@email.com"
               icon={Mail}
               value={form.email}
               onChange={set('email')}
@@ -131,7 +131,7 @@ export default function Login() {
               autoComplete="email"
             />
             <Input
-              label="Contraseña"
+              label="Password"
               type="password"
               placeholder="••••••••"
               icon={Lock}
@@ -149,21 +149,21 @@ export default function Login() {
                   onChange={set('remember')}
                   className="w-4 h-4 rounded border-dark-400 bg-dark-600 accent-blue-500"
                 />
-                <span className="text-sm text-gray-400">Recordarme</span>
+                <span className="text-sm text-gray-400">Remember me</span>
               </label>
               <Link to="/forgot-password" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
-                ¿Olvidaste tu contraseña?
+                Forgot your password?
               </Link>
             </div>
 
             <Button type="submit" loading={loading} fullWidth size="lg" className="mt-1">
-              Entrar
+              Sign in
             </Button>
           </form>
 
           <div className="flex items-center gap-4 my-6">
             <div className="flex-1 h-px bg-dark-500" />
-            <span className="text-xs text-gray-600">O continúa con</span>
+            <span className="text-xs text-gray-600">Or continue with</span>
             <div className="flex-1 h-px bg-dark-500" />
           </div>
 
@@ -180,9 +180,9 @@ export default function Login() {
           </div>
 
           <p className="text-center text-sm text-gray-500 mt-6">
-            ¿No tienes cuenta?{' '}
+            Don't have an account?{' '}
             <Link to="/register" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
-              Regístrate gratis
+              Sign up for free
             </Link>
           </p>
         </motion.div>

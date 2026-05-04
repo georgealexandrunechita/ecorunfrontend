@@ -44,7 +44,7 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <p className="text-gray-500 text-sm mb-1">Bienvenido de vuelta</p>
+          <p className="text-gray-500 text-sm mb-1">Welcome back</p>
           <h1 className="text-3xl font-black text-white">
             {user?.name} <span className="text-blue-400">{user?.surname}</span>
           </h1>
@@ -76,20 +76,20 @@ export default function Dashboard() {
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xs text-gray-500 font-medium">NIV.</span>
+                  <span className="text-xs text-gray-500 font-medium">LVL.</span>
                   <span className="text-2xl font-black text-white">{user?.level}</span>
                 </div>
               </div>
 
               <div>
-                <p className="text-gray-500 text-sm mb-1">Mis EcoPuntos</p>
+                <p className="text-gray-500 text-sm mb-1">My EcoPoints</p>
                 <p className="text-5xl font-black text-white">
                   {user?.ecoPoints?.toLocaleString()}
                   <span className="text-xl text-blue-400 font-semibold ml-2">pts</span>
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <ProgressBar value={user?.levelProgress} className="w-32" />
-                  <span className="text-xs text-gray-500">{user?.levelProgress}% al siguiente nivel</span>
+                  <span className="text-xs text-gray-500">{user?.levelProgress}% to next level</span>
                 </div>
               </div>
             </div>
@@ -97,10 +97,10 @@ export default function Dashboard() {
             {/* Impact stats */}
             <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: 'Árboles salvados', value: user?.treesaved, icon: Leaf, color: 'text-emerald-400' },
-                { label: 'kg CO₂ evitado', value: `${user?.co2Avoided}kg`, icon: TrendingUp, color: 'text-blue-400' },
-                { label: 'Posición Sevilla', value: `#${user?.rank}`, icon: Trophy, color: 'text-yellow-400' },
-                { label: 'Racha de días', value: `${user?.streak}🔥`, icon: Flame, color: 'text-orange-400' },
+                { label: 'Trees saved', value: user?.treesaved, icon: Leaf, color: 'text-emerald-400' },
+                { label: 'kg CO₂ avoided', value: `${user?.co2Avoided}kg`, icon: TrendingUp, color: 'text-blue-400' },
+                { label: 'Seville rank', value: `#${user?.rank}`, icon: Trophy, color: 'text-yellow-400' },
+                { label: 'Day streak', value: `${user?.streak}🔥`, icon: Flame, color: 'text-orange-400' },
               ].map((item) => (
                 <div key={item.label} className="bg-dark-800/60 rounded-2xl p-4 text-center">
                   <item.icon className={`w-5 h-5 mx-auto mb-2 ${item.color}`} />
@@ -116,17 +116,17 @@ export default function Dashboard() {
             <Link to="/challenges">
               <Button size="sm">
                 <Target className="w-4 h-4" />
-                Ver retos
+                View challenges
               </Button>
             </Link>
             <Button variant="ghost" size="sm">
               <Share2 className="w-4 h-4" />
-              Compartir logro
+              Share achievement
             </Button>
             <Link to="/challenges">
               <Button variant="secondary" size="sm">
                 <Trophy className="w-4 h-4" />
-                Ver ranking
+                View ranking
               </Button>
             </Link>
           </div>
@@ -143,9 +143,9 @@ export default function Dashboard() {
             className="lg:col-span-2 bg-dark-700 border border-dark-500 rounded-2xl p-6"
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white">Últimas carreras</h2>
+              <h2 className="text-lg font-bold text-white">Recent runs</h2>
               <Link to="/challenges" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                Ver todas <ChevronRight className="w-3 h-3" />
+                View all <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
 
@@ -183,7 +183,7 @@ export default function Dashboard() {
               transition={{ delay: 0.3 }}
               className="bg-dark-700 border border-dark-500 rounded-2xl p-5"
             >
-              <h2 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">Próximo reto</h2>
+              <h2 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">Next challenge</h2>
               {nextChallenge ? (
                 <div>
                   <div className="text-2xl mb-2">{nextChallenge.icon}</div>
@@ -191,7 +191,7 @@ export default function Dashboard() {
                   <p className="text-xs text-gray-500 mb-3">{nextChallenge.location} · {nextChallenge.distance} km</p>
                   <div className="mb-3">
                     <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>Progreso</span>
+                      <span>Progress</span>
                       <span>{nextChallenge.progress}%</span>
                     </div>
                     <ProgressBar value={nextChallenge.progress} />
@@ -199,12 +199,12 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <Badge variant="blue">{nextChallenge.ecoPoints} pts</Badge>
                     <Link to="/challenges">
-                      <Button size="sm">Continuar</Button>
+                      <Button size="sm">Continue</Button>
                     </Link>
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-500 text-sm">No tienes retos activos</p>
+                <p className="text-gray-500 text-sm">No active challenges</p>
               )}
             </motion.div>
 
@@ -215,7 +215,7 @@ export default function Dashboard() {
               transition={{ delay: 0.35 }}
               className="bg-dark-700 border border-dark-500 rounded-2xl p-5"
             >
-              <h2 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">Logros</h2>
+              <h2 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">Achievements</h2>
               <div className="flex flex-wrap gap-2 mb-3">
                 {mockAchievements.map((a) => (
                   <div
@@ -229,7 +229,7 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-500">{unlockedAchievements.length}/{mockAchievements.length} desbloqueados</p>
+              <p className="text-xs text-gray-500">{unlockedAchievements.length}/{mockAchievements.length} unlocked</p>
             </motion.div>
 
             {/* Ranking */}
@@ -240,7 +240,7 @@ export default function Dashboard() {
               className="bg-dark-700 border border-dark-500 rounded-2xl p-5"
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Ranking Sevilla</h2>
+                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Seville Ranking</h2>
                 <Medal className="w-4 h-4 text-yellow-400" />
               </div>
               <div className="flex flex-col gap-2">
@@ -263,7 +263,7 @@ export default function Dashboard() {
                       <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
                         {user?.name?.[0]}
                       </div>
-                      <span className="flex-1 text-sm text-blue-400 font-semibold">Tú</span>
+                      <span className="flex-1 text-sm text-blue-400 font-semibold">You</span>
                       <span className="text-xs text-gray-400">{r.points.toLocaleString()}</span>
                     </div>
                   ))}
@@ -280,10 +280,10 @@ export default function Dashboard() {
           transition={{ delay: 0.45 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6"
         >
-          <StatCard icon={TrendingUp} label="Kilómetros totales" value={`${user?.totalKm} km`} color="blue" />
-          <StatCard icon={Flame} label="Total carreras" value={user?.totalRuns} color="orange" />
-          <StatCard icon={Leaf} label="Impacto CO₂" value={`${user?.co2Avoided} kg`} color="green" />
-          <StatCard icon={Star} label="Nivel actual" value={`Nivel ${user?.level}`} sub={`${user?.levelProgress}% completado`} color="yellow" />
+          <StatCard icon={TrendingUp} label="Total kilometers" value={`${user?.totalKm} km`} color="blue" />
+          <StatCard icon={Flame} label="Total runs" value={user?.totalRuns} color="orange" />
+          <StatCard icon={Leaf} label="CO₂ impact" value={`${user?.co2Avoided} kg`} color="green" />
+          <StatCard icon={Star} label="Current level" value={`Level ${user?.level}`} sub={`${user?.levelProgress}% completed`} color="yellow" />
         </motion.div>
       </div>
     </div>

@@ -23,15 +23,15 @@ export default function Navbar() {
 
   const publicLinks = [
     { to: '/', label: 'Home' },
-    { to: '/challenges', label: 'Retos' },
+    { to: '/challenges', label: 'Challenges' },
     { to: '/help', label: 'Help' },
     { to: '/about', label: 'About us' },
   ]
 
   const appLinks = [
     { to: '/dashboard', label: 'Dashboard' },
-    { to: '/challenges', label: 'Retos' },
-    { to: '/map', label: 'Mapa' },
+    { to: '/challenges', label: 'Challenges' },
+    { to: '/map', label: 'Map' },
   ]
 
   const links = user ? appLinks : publicLinks
@@ -90,14 +90,14 @@ export default function Navbar() {
                       className="flex items-center gap-2 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-dark-600 transition-colors"
                     >
                       <User className="w-4 h-4" />
-                      Mi perfil
+                      My profile
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-dark-600 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
-                      Cerrar sesión
+                      Log out
                     </button>
                   </div>
                 )}
@@ -114,7 +114,7 @@ export default function Navbar() {
                   to="/register"
                   className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-200 active:scale-95"
                 >
-                  Registrarse
+                  Sign up
                 </Link>
               </>
             )}
@@ -153,12 +153,12 @@ export default function Navbar() {
                 onClick={handleLogout}
                 className="px-3 py-2 text-sm font-medium text-red-400 hover:text-red-300 text-left"
               >
-                Cerrar sesión
+                Log out
               </button>
             ) : (
               <>
                 <Link to="/login" onClick={() => setOpen(false)} className="px-3 py-2 text-sm font-medium text-gray-300">Login</Link>
-                <Link to="/register" onClick={() => setOpen(false)} className="px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl text-center">Registrarse</Link>
+                <Link to="/register" onClick={() => setOpen(false)} className="px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl text-center">Sign up</Link>
               </>
             )}
           </div>
