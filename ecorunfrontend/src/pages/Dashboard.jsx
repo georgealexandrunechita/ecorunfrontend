@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -5,15 +6,17 @@ import {
   ChevronRight, Star, Medal, Target
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { mockRuns, mockAchievements, mockRanking, mockChallenges } from '../data/mock'
+import { runService } from '../services/runService'
+import { challengeService } from '../services/challengeService'
+import { mockAchievements, mockRanking } from '../data/mock'
 import ProgressBar from '../components/ui/ProgressBar'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 
 function StatCard({ icon: Icon, label, value, sub, color = 'blue' }) {
   const colors = {
-    blue: 'text-blue-400 bg-blue-500/10',
-    green: 'text-emerald-400 bg-emerald-500/10',
+    blue:   'text-blue-400 bg-blue-500/10',
+    green:  'text-emerald-400 bg-emerald-500/10',
     yellow: 'text-yellow-400 bg-yellow-500/10',
     orange: 'text-orange-400 bg-orange-500/10',
   }
@@ -29,10 +32,41 @@ function StatCard({ icon: Icon, label, value, sub, color = 'blue' }) {
   )
 }
 
+function formatDuration(minutes) {
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return h > 0 ? `${h}h ${m}m` : `${m}m`
+}
+
+function formatPace(distanceKm, durationMinutes) {
+  if (!distanceKm || !durationMinutes) return '--'
+  const paceMin = durationMinutes / distanceKm
+  const min = Math.floor(paceMin)
+  const sec = Math.round((paceMin - min) * 60).toString().padStart(2, '0')
+  return `${min}:${sec}`
+}
+
 export default function Dashboard() {
   const { user } = useAuth()
-  const nextChallenge = mockChallenges.find(c => c.status === 'in_progress')
+  const [runs, setRuns] = useState([])
+  const [nextChallenge, setNextChallenge] = useState(null)
   const unlockedAchievements = mockAchievements.filter(a => a.unlocked)
+
+  useEffect(() => {
+    if (!user?.id) return
+
+    runService.getUserRuns(user.id)
+      .then((data) => setRuns(Array.isArray(data) ? data.slice(0, 3) : []))
+      .catch(() => setRuns([]))
+
+    challengeService.getAll()
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setNextChallenge(data[0])
+        }
+      })
+      .catch(() => {})
+  }, [user?.id])
 
   return (
     <div className="min-h-screen bg-dark-900">
@@ -60,7 +94,6 @@ export default function Dashboard() {
           <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
             {/* Points + Level */}
             <div className="flex items-center gap-6">
-              {/* Circular progress */}
               <div className="relative w-28 h-28 flex-shrink-0">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="42" fill="none" stroke="#1e293b" strokeWidth="8" />
@@ -84,7 +117,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-gray-500 text-sm mb-1">My EcoPoints</p>
                 <p className="text-5xl font-black text-white">
-                  {user?.ecoPoints?.toLocaleString()}
+                  {(user?.ecoPoints ?? 0).toLocaleString()}
                   <span className="text-xl text-blue-400 font-semibold ml-2">pts</span>
                 </p>
                 <div className="flex items-center gap-2 mt-2">
@@ -97,10 +130,10 @@ export default function Dashboard() {
             {/* Impact stats */}
             <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: 'Trees saved', value: user?.treesaved, icon: Leaf, color: 'text-emerald-400' },
-                { label: 'kg CO₂ avoided', value: `${user?.co2Avoided}kg`, icon: TrendingUp, color: 'text-blue-400' },
-                { label: 'Seville rank', value: `#${user?.rank}`, icon: Trophy, color: 'text-yellow-400' },
-                { label: 'Day streak', value: `${user?.streak}🔥`, icon: Flame, color: 'text-orange-400' },
+                { label: 'Trees saved',    value: user?.treesaved,              icon: Leaf,      color: 'text-emerald-400' },
+                { label: 'kg CO₂ avoided', value: `${user?.co2Avoided ?? 0}kg`, icon: TrendingUp, color: 'text-blue-400' },
+                { label: 'Seville rank',   value: user?.rank ? `#${user.rank}` : '—', icon: Trophy, color: 'text-yellow-400' },
+                { label: 'Day streak',     value: `${user?.streak ?? 0}🔥`,     icon: Flame,     color: 'text-orange-400' },
               ].map((item) => (
                 <div key={item.label} className="bg-dark-800/60 rounded-2xl p-4 text-center">
                   <item.icon className={`w-5 h-5 mx-auto mb-2 ${item.color}`} />
@@ -149,33 +182,40 @@ export default function Dashboard() {
               </Link>
             </div>
 
-            <div className="flex flex-col gap-4">
-              {mockRuns.map((run, i) => (
-                <div key={run.id} className="flex items-center gap-4 p-3 bg-dark-800/50 rounded-xl">
-                  <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-4 h-4 text-blue-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-semibold text-white truncate">{run.name}</p>
-                      <span className="text-xs text-blue-400 font-bold ml-2 flex-shrink-0">+{run.ecoPoints} pts</span>
+            {runs.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                {runs.map((run) => (
+                  <div key={run.id} className="flex items-center gap-4 p-3 bg-dark-800/50 rounded-xl">
+                    <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4 h-4 text-blue-400" />
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
-                      <span>{run.distance} km</span>
-                      <span>·</span>
-                      <span>{run.duration}</span>
-                      <span>·</span>
-                      <span>{run.pace} /km</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-sm font-semibold text-white truncate">{run.run_name}</p>
+                        <span className="text-xs text-blue-400 font-bold ml-2 flex-shrink-0">+{run.points_earned} pts</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                        <span>{parseFloat(run.distance_km)} km</span>
+                        <span>·</span>
+                        <span>{formatDuration(run.duration_minutes)}</span>
+                        <span>·</span>
+                        <span>{formatPace(run.distance_km, run.duration_minutes)} /km</span>
+                      </div>
                     </div>
-                    <ProgressBar value={run.progress} size="sm" />
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <p className="text-4xl mb-3">🏃</p>
+                <p className="text-gray-400 text-sm">No runs yet. Start your first one!</p>
+              </div>
+            )}
           </motion.div>
 
           {/* Side cards */}
           <div className="flex flex-col gap-6">
+
             {/* Next challenge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -186,20 +226,14 @@ export default function Dashboard() {
               <h2 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">Next challenge</h2>
               {nextChallenge ? (
                 <div>
-                  <div className="text-2xl mb-2">{nextChallenge.icon}</div>
                   <p className="font-bold text-white mb-1">{nextChallenge.name}</p>
-                  <p className="text-xs text-gray-500 mb-3">{nextChallenge.location} · {nextChallenge.distance} km</p>
-                  <div className="mb-3">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>Progress</span>
-                      <span>{nextChallenge.progress}%</span>
-                    </div>
-                    <ProgressBar value={nextChallenge.progress} />
-                  </div>
+                  <p className="text-xs text-gray-500 mb-3">
+                    {nextChallenge.zone ? `${nextChallenge.zone}, Sevilla` : 'Sevilla'} · {parseFloat(nextChallenge.goal_value)} km
+                  </p>
                   <div className="flex items-center justify-between">
-                    <Badge variant="blue">{nextChallenge.ecoPoints} pts</Badge>
+                    <Badge variant="blue">{nextChallenge.reward_points} pts</Badge>
                     <Link to="/challenges">
-                      <Button size="sm">Continue</Button>
+                      <Button size="sm">Start</Button>
                     </Link>
                   </div>
                 </div>
@@ -245,28 +279,26 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-col gap-2">
                 {mockRanking.slice(0, 3).map((r) => (
-                  <div key={r.rank} className={`flex items-center gap-3 p-2 rounded-lg ${r.isCurrentUser ? 'bg-blue-600/10 border border-blue-600/20' : ''}`}>
-                    <span className={`text-xs font-black w-6 text-center ${r.rank <= 3 ? 'text-yellow-400' : 'text-gray-500'}`}>
-                      #{r.rank}
-                    </span>
+                  <div key={r.rank} className="flex items-center gap-3 p-2 rounded-lg">
+                    <span className="text-xs font-black w-6 text-center text-yellow-400">#{r.rank}</span>
                     <div className="w-7 h-7 bg-dark-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
                       {r.name[0]}
                     </div>
-                    <span className={`flex-1 text-sm ${r.isCurrentUser ? 'text-blue-400 font-semibold' : 'text-gray-300'}`}>{r.name}</span>
+                    <span className="flex-1 text-sm text-gray-300">{r.name}</span>
                     <span className="text-xs text-gray-500">{r.points.toLocaleString()}</span>
                   </div>
                 ))}
                 <div className="border-t border-dark-500 pt-2 mt-1">
-                  {mockRanking.filter(r => r.isCurrentUser).map(r => (
-                    <div key="me" className="flex items-center gap-3 p-2 rounded-lg bg-blue-600/10 border border-blue-600/20">
-                      <span className="text-xs font-black w-6 text-center text-blue-400">#{r.rank}</span>
-                      <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
-                        {user?.name?.[0]}
-                      </div>
-                      <span className="flex-1 text-sm text-blue-400 font-semibold">You</span>
-                      <span className="text-xs text-gray-400">{r.points.toLocaleString()}</span>
+                  <div className="flex items-center gap-3 p-2 rounded-lg bg-blue-600/10 border border-blue-600/20">
+                    <span className="text-xs font-black w-6 text-center text-blue-400">
+                      {user?.rank ? `#${user.rank}` : '—'}
+                    </span>
+                    <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                      {user?.name?.[0]}
                     </div>
-                  ))}
+                    <span className="flex-1 text-sm text-blue-400 font-semibold">You</span>
+                    <span className="text-xs text-gray-400">{(user?.ecoPoints ?? 0).toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -280,11 +312,12 @@ export default function Dashboard() {
           transition={{ delay: 0.45 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6"
         >
-          <StatCard icon={TrendingUp} label="Total kilometers" value={`${user?.totalKm} km`} color="blue" />
-          <StatCard icon={Flame} label="Total runs" value={user?.totalRuns} color="orange" />
-          <StatCard icon={Leaf} label="CO₂ impact" value={`${user?.co2Avoided} kg`} color="green" />
-          <StatCard icon={Star} label="Current level" value={`Level ${user?.level}`} sub={`${user?.levelProgress}% completed`} color="yellow" />
+          <StatCard icon={TrendingUp} label="Total kilometers"  value={`${user?.totalKm ?? 0} km`}         color="blue" />
+          <StatCard icon={Flame}      label="Total runs"        value={user?.totalRuns ?? runs.length}      color="orange" />
+          <StatCard icon={Leaf}       label="CO₂ impact"        value={`${user?.co2Avoided ?? 0} kg`}       color="green" />
+          <StatCard icon={Star}       label="Current level"     value={`Level ${user?.level ?? 1}`} sub={`${user?.levelProgress ?? 0}% completed`} color="yellow" />
         </motion.div>
+
       </div>
     </div>
   )
