@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Filter, Users, Zap, Navigation, ChevronRight, Activity, Repeat, Timer, Sprout, Award } from 'lucide-react'
+import { MapPin, Filter, Users, Target, Navigation, ChevronRight, Activity, Repeat, Timer, Sprout, Award } from 'lucide-react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -308,7 +308,7 @@ export default function ChallengeMap() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: Zap,    label: 'Active challenges in Seville', value: challenges.filter(c => c.status !== 'completed').length, color: 'text-blue-400' },
+              { icon: Target,    label: 'Active challenges in Seville', value: challenges.filter(c => c.status !== 'completed').length, color: 'text-blue-400' },
               { icon: Users,  label: 'Participating runners',        value: '1,840',  color: 'text-emerald-400' },
               { icon: MapPin, label: 'Zones covered',                value: '5 zones', color: 'text-orange-400' },
               { icon: Filter, label: 'Active filter',                value: zone,     color: 'text-purple-400' },

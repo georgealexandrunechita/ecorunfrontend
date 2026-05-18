@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Leaf, Trophy, Map, Users, Wind, Shield, Zap } from 'lucide-react'
+import { ArrowRight, Leaf, Trophy, Map, Users, Wind, Shield, Target } from 'lucide-react'
 import { mockStats } from '../data/mock'
 import Button from '../components/ui/Button'
 
@@ -164,7 +164,7 @@ export default function Home() {
                 bg: 'bg-yellow-500/10 border-yellow-500/20',
               },
               {
-                icon: Zap,
+                icon: Target,
                 title: 'Urban Challenges',
                 desc: 'Routes designed across Seville zones with weekly and monthly challenges. Discover the city while running and share your achievements.',
                 color: 'text-blue-400',

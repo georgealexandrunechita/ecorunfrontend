@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Search, Filter, MapPin, Zap, Users, Trophy, ChevronRight, Activity, Repeat, Timer, Sprout, Award } from 'lucide-react'
+import { Search, Filter, MapPin, Zap, Users, Trophy, ChevronRight, Activity, Repeat, Timer, Sprout, Award, Target } from 'lucide-react'
 import { challengeService } from '../services/challengeService'
 import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
@@ -273,7 +273,7 @@ export default function Challenges() {
           <div className="bg-dark-700 border border-dark-500 rounded-2xl p-5">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { icon: Zap,    label: 'Active challenges',    value: activeCount,                      color: 'text-blue-400' },
+                { icon: Target,    label: 'Active challenges',    value: activeCount,                      color: 'text-blue-400' },
                 { icon: Users,  label: 'Participating runners', value: totalParticipants.toLocaleString(), color: 'text-emerald-400' },
                 { icon: Trophy, label: 'Total challenges',      value: challenges.length,                 color: 'text-yellow-400' },
                 { icon: MapPin, label: 'Seville zones',         value: `${ZONES.length - 1} zones`,       color: 'text-orange-400' },
