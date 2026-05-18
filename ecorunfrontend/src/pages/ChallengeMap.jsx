@@ -4,7 +4,7 @@ import { MapPin, Filter, Users, Zap, Navigation, ChevronRight } from 'lucide-rea
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { mockChallenges } from '../data/mock'
+import { challengeService } from '../services/challengeService'
 import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
@@ -33,16 +33,32 @@ const statusConfig = {
   in_progress: { label: 'In progress', variant: 'blue', color: '#3B82F6' },
   completed:   { label: 'Completed',   variant: 'green', color: '#10B981' },
   available:   { label: 'Available',   variant: 'gray',  color: '#6B7280' },
+  pending:     { label: 'Available',   variant: 'gray',  color: '#6B7280' },
 }
 
-// Challenges with real Seville coordinates
-const challengeCoords = {
-  1: [37.4090, -5.9920],
-  2: [37.3826, -6.0017],
-  3: [37.3724, -5.9878],
-  4: [37.4178, -5.8931],
-  5: [37.3965, -5.9930],
-  6: [37.3441, -5.9806],
+const CATEGORY_ICONS = {
+  Distancia:  '🏃',
+  Frecuencia: '🔥',
+  Velocidad:  '⚡',
+  Iniciación: '🌱',
+}
+
+function normalizeChallenge(c) {
+  return {
+    id: c.id,
+    name: c.name,
+    description: c.description,
+    location: c.zone ? `${c.zone}, Sevilla` : 'Sevilla',
+    zone: c.zone || null,
+    distance: parseFloat(c.goal_value),
+    ecoPoints: c.reward_points,
+    participants: c.participants ?? 0,
+    icon: CATEGORY_ICONS[c.category] || '🏅',
+    status: c.status || 'available',
+    progress: c.progress ?? 0,
+    lat: parseFloat(c.lat),
+    lng: parseFloat(c.lng),
+  }
 }
 
 function createCustomIcon(color) {
@@ -75,11 +91,20 @@ function ZoomToZone({ zone }) {
 }
 
 export default function ChallengeMap() {
+  const [challenges, setChallenges] = useState([])
   const [zone, setZone] = useState('All')
   const [selected, setSelected] = useState(null)
 
-  const filtered = mockChallenges.filter(c => zone === 'All' || c.zone === zone)
-  const selectedChallenge = selected ? mockChallenges.find(c => c.id === selected) : null
+  useEffect(() => {
+    challengeService.getAll()
+      .then((data) => {
+        const normalized = Array.isArray(data) ? data.map(normalizeChallenge) : []
+        setChallenges(normalized)
+      })
+      .catch(() => {})
+  }, [])
+
+  const filtered = challenges.filter(c => zone === 'All' || c.zone === zone)
 
   return (
     <div className="min-h-screen bg-dark-900">
@@ -156,15 +181,14 @@ export default function ChallengeMap() {
                 <ZoomToZone zone={zone} />
 
                 {filtered.map((challenge) => {
-                  const coords = challengeCoords[challenge.id]
-                  if (!coords) return null
-                  const status = statusConfig[challenge.status]
+                  if (!challenge.lat || !challenge.lng) return null
+                  const status = statusConfig[challenge.status] || statusConfig.available
                   const icon = createCustomIcon(status.color)
 
                   return (
                     <Marker
                       key={challenge.id}
-                      position={coords}
+                      position={[challenge.lat, challenge.lng]}
                       icon={icon}
                       eventHandlers={{
                         click: () => setSelected(challenge.id === selected ? null : challenge.id),
@@ -279,7 +303,7 @@ export default function ChallengeMap() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: Zap,    label: 'Active challenges in Seville', value: mockChallenges.filter(c => c.status !== 'completed').length, color: 'text-blue-400' },
+              { icon: Zap,    label: 'Active challenges in Seville', value: challenges.filter(c => c.status !== 'completed').length, color: 'text-blue-400' },
               { icon: Users,  label: 'Participating runners',        value: '1,840',  color: 'text-emerald-400' },
               { icon: MapPin, label: 'Zones covered',                value: '5 zones', color: 'text-orange-400' },
               { icon: Filter, label: 'Active filter',                value: zone,     color: 'text-purple-400' },
