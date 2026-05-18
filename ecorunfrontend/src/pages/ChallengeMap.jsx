@@ -1,28 +1,78 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { MapPin, Filter, Users, Zap, Navigation, ChevronRight } from 'lucide-react'
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import { mockChallenges } from '../data/mock'
 import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
 
+// Fix default marker icons broken by Webpack/Vite
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+})
+
 const ZONES = ['All', 'Norte', 'Sur', 'Centro', 'Triana', 'Este']
 
-const statusConfig = {
-  in_progress: { label: 'In progress', variant: 'blue', dot: 'bg-blue-500' },
-  completed: { label: 'Completed', variant: 'green', dot: 'bg-emerald-500' },
-  available: { label: 'Available', variant: 'gray', dot: 'bg-gray-500' },
+const ZONE_CENTERS = {
+  Norte:  [37.4090, -5.9920],
+  Sur:    [37.3441, -5.9806],
+  Centro: [37.3886, -5.9823],
+  Triana: [37.3826, -6.0017],
+  Este:   [37.4178, -5.8931],
 }
 
-// Mock map markers positions (% of map container)
-const mapMarkers = [
-  { id: 1, x: 35, y: 25 },
-  { id: 2, x: 28, y: 60 },
-  { id: 3, x: 55, y: 70 },
-  { id: 4, x: 72, y: 40 },
-  { id: 5, x: 48, y: 45 },
-  { id: 6, x: 42, y: 80 },
-]
+const SEVILLE_CENTER = [37.3886, -5.9823]
+
+const statusConfig = {
+  in_progress: { label: 'In progress', variant: 'blue', color: '#3B82F6' },
+  completed:   { label: 'Completed',   variant: 'green', color: '#10B981' },
+  available:   { label: 'Available',   variant: 'gray',  color: '#6B7280' },
+}
+
+// Challenges with real Seville coordinates
+const challengeCoords = {
+  1: [37.4090, -5.9920],
+  2: [37.3826, -6.0017],
+  3: [37.3724, -5.9878],
+  4: [37.4178, -5.8931],
+  5: [37.3965, -5.9930],
+  6: [37.3441, -5.9806],
+}
+
+function createCustomIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="
+      width: 32px; height: 32px;
+      background: ${color};
+      border: 3px solid white;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    "></div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -34],
+  })
+}
+
+function ZoomToZone({ zone }) {
+  const map = useMap()
+  useEffect(() => {
+    if (zone === 'All') {
+      map.setView(SEVILLE_CENTER, 13)
+    } else if (ZONE_CENTERS[zone]) {
+      map.setView(ZONE_CENTERS[zone], 15)
+    }
+  }, [zone, map])
+  return null
+}
 
 export default function ChallengeMap() {
   const [zone, setZone] = useState('All')
@@ -85,79 +135,52 @@ export default function ChallengeMap() {
                 <span className="text-sm font-semibold text-white">Seville, Spain</span>
               </div>
               <div className="flex items-center gap-3 text-xs text-gray-500">
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-blue-500 rounded-full" />In progress</div>
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full" />Completed</div>
-                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-gray-500 rounded-full" />Available</div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-blue-500 rounded-full inline-block" />In progress</div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full inline-block" />Completed</div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 bg-gray-500 rounded-full inline-block" />Available</div>
               </div>
             </div>
 
-            {/* Mock map visual */}
-            <div className="relative bg-dark-800 aspect-[4/3] overflow-hidden">
-              {/* Grid lines simulating streets */}
-              <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#3B82F6" strokeWidth="0.5" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-              </svg>
+            {/* Real Leaflet map */}
+            <div className="h-[480px]">
+              <MapContainer
+                center={SEVILLE_CENTER}
+                zoom={13}
+                style={{ height: '100%', width: '100%' }}
+                zoomControl={true}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <ZoomToZone zone={zone} />
 
-              {/* Decorative roads */}
-              <svg className="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
-                <line x1="30%" y1="0" x2="45%" y2="100%" stroke="#3B82F6" strokeWidth="1.5" />
-                <line x1="0" y1="50%" x2="100%" y2="45%" stroke="#3B82F6" strokeWidth="1.5" />
-                <line x1="60%" y1="0" x2="55%" y2="100%" stroke="#3B82F6" strokeWidth="1" />
-                <line x1="0" y1="25%" x2="100%" y2="30%" stroke="#3B82F6" strokeWidth="0.8" />
-                <line x1="0" y1="75%" x2="100%" y2="70%" stroke="#3B82F6" strokeWidth="0.8" />
-                <ellipse cx="50%" cy="50%" rx="25%" ry="15%" fill="none" stroke="#3B82F6" strokeWidth="0.8" strokeDasharray="4 4" />
-              </svg>
+                {filtered.map((challenge) => {
+                  const coords = challengeCoords[challenge.id]
+                  if (!coords) return null
+                  const status = statusConfig[challenge.status]
+                  const icon = createCustomIcon(status.color)
 
-              {/* City label */}
-              <div className="absolute top-4 left-4 bg-dark-900/80 backdrop-blur px-3 py-1.5 rounded-lg">
-                <p className="text-xs text-gray-400 font-medium">Seville · Simulated satellite view</p>
-              </div>
-
-              {/* Map markers */}
-              {mapMarkers.map((marker) => {
-                const challenge = mockChallenges.find(c => c.id === marker.id)
-                if (!challenge) return null
-                if (zone !== 'All' && challenge.zone !== zone) return null
-                const isSelected = selected === marker.id
-                const dotColor = statusConfig[challenge.status].dot
-
-                return (
-                  <button
-                    key={marker.id}
-                    onClick={() => setSelected(isSelected ? null : marker.id)}
-                    style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 group"
-                  >
-                    <div className={`relative flex flex-col items-center transition-transform duration-200 ${isSelected ? 'scale-125' : 'hover:scale-110'}`}>
-                      <div className={`w-10 h-10 bg-dark-800 border-2 ${isSelected ? 'border-blue-500' : 'border-dark-400'} rounded-full flex items-center justify-center shadow-lg text-lg`}>
-                        {challenge.icon}
-                      </div>
-                      <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 ${dotColor} rounded-full border-2 border-dark-800`} />
-                      {isSelected && (
-                        <div className="absolute bottom-full mb-2 bg-dark-700 border border-dark-400 rounded-xl px-3 py-2 whitespace-nowrap shadow-card">
-                          <p className="text-xs font-bold text-white">{challenge.name}</p>
-                          <p className="text-xs text-gray-500">{challenge.distance} km · {challenge.ecoPoints} pts</p>
+                  return (
+                    <Marker
+                      key={challenge.id}
+                      position={coords}
+                      icon={icon}
+                      eventHandlers={{
+                        click: () => setSelected(challenge.id === selected ? null : challenge.id),
+                      }}
+                    >
+                      <Popup>
+                        <div style={{ minWidth: '180px' }}>
+                          <p style={{ fontWeight: 'bold', marginBottom: '4px' }}>{challenge.name}</p>
+                          <p style={{ fontSize: '12px', color: '#6B7280', marginBottom: '6px' }}>{challenge.location}</p>
+                          <p style={{ fontSize: '12px' }}>{challenge.distance} km · {challenge.ecoPoints} pts</p>
                         </div>
-                      )}
-                    </div>
-                  </button>
-                )
-              })}
-
-              {/* Empty state for zone */}
-              {zone !== 'All' && filtered.length === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-4xl mb-3">🗺️</p>
-                    <p className="text-gray-400 text-sm">No challenges in this zone</p>
-                  </div>
-                </div>
-              )}
+                      </Popup>
+                    </Marker>
+                  )
+                })}
+              </MapContainer>
             </div>
           </motion.div>
 
@@ -256,10 +279,10 @@ export default function ChallengeMap() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: Zap, label: 'Active challenges in Seville', value: mockChallenges.filter(c => c.status !== 'completed').length, color: 'text-blue-400' },
-              { icon: Users, label: 'Participating runners', value: '1,840', color: 'text-emerald-400' },
-              { icon: MapPin, label: 'Zones covered', value: '5 zones', color: 'text-orange-400' },
-              { icon: Filter, label: 'Active filter', value: zone, color: 'text-purple-400' },
+              { icon: Zap,    label: 'Active challenges in Seville', value: mockChallenges.filter(c => c.status !== 'completed').length, color: 'text-blue-400' },
+              { icon: Users,  label: 'Participating runners',        value: '1,840',  color: 'text-emerald-400' },
+              { icon: MapPin, label: 'Zones covered',                value: '5 zones', color: 'text-orange-400' },
+              { icon: Filter, label: 'Active filter',                value: zone,     color: 'text-purple-400' },
             ].map((stat) => (
               <div key={stat.label} className="flex items-center gap-3">
                 <stat.icon className={`w-5 h-5 ${stat.color} flex-shrink-0`} />
