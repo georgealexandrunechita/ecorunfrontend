@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, Lock, Leaf, Trophy, Zap } from 'lucide-react'
+import { Mail, Lock, Leaf, Trophy, Target } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
@@ -77,7 +77,7 @@ export default function Login() {
               <div className="flex flex-col gap-3">
                 {[
                   { icon: Trophy, text: 'Your ranking awaits' },
-                  { icon: Zap, text: 'New challenges available' },
+                  { icon: Target, text: 'New challenges available' },
                   { icon: Leaf, text: 'Your eco impact keeps growing' },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex items-center gap-3 text-gray-300 text-sm">

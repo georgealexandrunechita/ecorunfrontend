@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { User, Mail, Lock, Leaf, Trophy, Zap, CheckCircle } from 'lucide-react'
+import { User, Mail, Lock, Leaf, Trophy, Target, CheckCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
@@ -55,7 +55,7 @@ export default function Register() {
   const benefits = [
     { icon: Trophy, text: 'Access the Seville ranking' },
     { icon: Leaf, text: 'Contribute to the planet every km' },
-    { icon: Zap, text: 'Unlock exclusive challenges and achievements' },
+    { icon: Target, text: 'Unlock exclusive challenges and achievements' },
     { icon: CheckCircle, text: 'Always free, no subscriptions' },
   ]
 

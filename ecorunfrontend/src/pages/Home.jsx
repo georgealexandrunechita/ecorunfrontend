@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Leaf, Trophy, Map, Users, TrendingUp, Shield, Zap } from 'lucide-react'
+import { ArrowRight, Leaf, Trophy, Map, Users, Wind, Shield, Zap } from 'lucide-react'
 import { mockStats } from '../data/mock'
 import Button from '../components/ui/Button'
 
@@ -104,7 +104,7 @@ export default function Home() {
             {[
               { label: 'Active runners', value: mockStats.activeRunners.toLocaleString(), icon: Users, suffix: '' },
               { label: 'Trees saved', value: mockStats.treesSaved.toLocaleString(), icon: Leaf, suffix: '' },
-              { label: 'kg CO₂ avoided', value: mockStats.co2Avoided.toLocaleString(), icon: TrendingUp, suffix: 'kg' },
+              { label: 'kg CO₂ avoided', value: mockStats.co2Avoided.toLocaleString(), icon: Wind, suffix: 'kg' },
               { label: 'Seville routes', value: mockStats.sevillaRoutes, icon: Map, suffix: '' },
             ].map((stat, i) => (
               <motion.div
