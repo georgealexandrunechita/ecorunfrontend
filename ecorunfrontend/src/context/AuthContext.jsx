@@ -1,7 +1,29 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { mockUser } from '../data/mock'
+import { authService } from '../services/authService'
 
 const AuthContext = createContext(null)
+
+function buildUserProfile(apiUser) {
+  const points = apiUser.eco_points ?? apiUser.ecoPoints ?? 0
+  const level = Math.floor(points / 200) + 1
+  const levelProgress = Math.round((points % 200) / 200 * 100)
+  return {
+    id: apiUser.id,
+    name: apiUser.name || apiUser.username,
+    surname: apiUser.surname || '',
+    email: apiUser.email,
+    ecoPoints: points,
+    level,
+    levelProgress,
+    streak: apiUser.streak ?? 0,
+    rank: apiUser.rank ?? null,
+    totalRunners: apiUser.totalRunners ?? null,
+    treesaved: apiUser.trees_saved ?? apiUser.treesaved ?? Math.floor(points / 150),
+    co2Avoided: apiUser.co2_avoided ?? apiUser.co2Avoided ?? parseFloat((points * 0.027).toFixed(1)),
+    totalKm: apiUser.total_km ?? apiUser.totalKm ?? 0,
+    totalRuns: apiUser.total_runs ?? apiUser.totalRuns ?? 0,
+  }
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -21,30 +43,31 @@ export function AuthProvider({ children }) {
   }, [])
 
   const login = async (email, password) => {
-    // TODO: swap with authService.login(email, password)
-    await new Promise((r) => setTimeout(r, 800))
-    const userData = { ...mockUser, email }
-    const fakeToken = 'mock-token-' + Date.now()
-    localStorage.setItem('ecorun_token', fakeToken)
+    const data = await authService.login(email, password)
+    const userData = buildUserProfile(data.user)
+    localStorage.setItem('ecorun_token', data.token)
     localStorage.setItem('ecorun_user', JSON.stringify(userData))
     setUser(userData)
     return userData
   }
 
-  const register = async (data) => {
-    // TODO: swap with authService.register(data)
-    await new Promise((r) => setTimeout(r, 1000))
-    const userData = { ...mockUser, name: data.name, surname: data.surname, email: data.email }
-    const fakeToken = 'mock-token-' + Date.now()
-    localStorage.setItem('ecorun_token', fakeToken)
+  const register = async (formData) => {
+    const data = await authService.register({
+      username: formData.name,
+      name: formData.name,
+      surname: formData.surname,
+      email: formData.email,
+      password: formData.password,
+    })
+    const userData = buildUserProfile(data.user)
+    localStorage.setItem('ecorun_token', data.token)
     localStorage.setItem('ecorun_user', JSON.stringify(userData))
     setUser(userData)
     return userData
   }
 
   const logout = () => {
-    localStorage.removeItem('ecorun_token')
-    localStorage.removeItem('ecorun_user')
+    authService.logout()
     setUser(null)
   }
 
