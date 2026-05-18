@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Filter, Users, Zap, Navigation, ChevronRight } from 'lucide-react'
+import { MapPin, Filter, Users, Zap, Navigation, ChevronRight, Activity, Repeat, Timer, Sprout, Award } from 'lucide-react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -37,10 +37,14 @@ const statusConfig = {
 }
 
 const CATEGORY_ICONS = {
-  Distancia:  '🏃',
-  Frecuencia: '🔥',
-  Velocidad:  '⚡',
-  Iniciación: '🌱',
+  Distancia:  Activity,
+  Frecuencia: Repeat,
+  Velocidad:  Timer,
+  Iniciación: Sprout,
+}
+
+function getCategoryIcon(category) {
+  return CATEGORY_ICONS[category] || Award
 }
 
 function normalizeChallenge(c) {
@@ -53,7 +57,7 @@ function normalizeChallenge(c) {
     distance: parseFloat(c.goal_value),
     ecoPoints: c.reward_points,
     participants: c.participants ?? 0,
-    icon: CATEGORY_ICONS[c.category] || '🏅',
+    category: c.category,
     status: c.status || 'available',
     progress: c.progress ?? 0,
     lat: parseFloat(c.lat),
@@ -226,6 +230,7 @@ export default function ChallengeMap() {
               {filtered.map((challenge, i) => {
                 const status = statusConfig[challenge.status]
                 const isSelected = selected === challenge.id
+                const CategoryIcon = getCategoryIcon(challenge.category)
 
                 return (
                   <motion.button
@@ -241,8 +246,8 @@ export default function ChallengeMap() {
                     }`}
                   >
                     <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-dark-600 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
-                        {challenge.icon}
+                      <div className="w-10 h-10 bg-blue-600/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <CategoryIcon className="w-5 h-5 text-blue-400" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">

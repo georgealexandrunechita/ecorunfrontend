@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Search, Filter, MapPin, Zap, Users, Trophy, ChevronRight } from 'lucide-react'
+import { Search, Filter, MapPin, Zap, Users, Trophy, ChevronRight, Activity, Repeat, Timer, Sprout, Award } from 'lucide-react'
 import { challengeService } from '../services/challengeService'
 import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
@@ -17,10 +17,14 @@ const statusConfig = {
 }
 
 const CATEGORY_ICONS = {
-  Distancia:  '🏃',
-  Frecuencia: '🔥',
-  Velocidad:  '⚡',
-  Iniciación: '🌱',
+  Distancia:  Activity,
+  Frecuencia: Repeat,
+  Velocidad:  Timer,
+  Iniciación: Sprout,
+}
+
+function getCategoryIcon(category) {
+  return CATEGORY_ICONS[category] || Award
 }
 
 function normalizeChallenge(c) {
@@ -36,7 +40,7 @@ function normalizeChallenge(c) {
     progress: c.progress ?? 0,
     ecoPoints: c.reward_points,
     participants: c.participants ?? 0,
-    icon: CATEGORY_ICONS[c.category] || '🏅',
+    category: c.category,
     tags: [c.category, c.difficulty, c.goal_type].filter(Boolean),
     difficulty: c.difficulty,
   }
@@ -44,6 +48,7 @@ function normalizeChallenge(c) {
 
 function ChallengeCard({ challenge, index }) {
   const status = statusConfig[challenge.status] || statusConfig.available
+  const CategoryIcon = getCategoryIcon(challenge.category)
 
   return (
     <motion.div
@@ -55,8 +60,8 @@ function ChallengeCard({ challenge, index }) {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-dark-600 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">
-            {challenge.icon}
+          <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+            <CategoryIcon className="w-6 h-6 text-blue-400" />
           </div>
           <div>
             <h3 className="font-bold text-white text-sm leading-tight mb-1">{challenge.name}</h3>
