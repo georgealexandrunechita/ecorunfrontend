@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { GitBranch, MessageCircle, Camera } from 'lucide-react'
+import { Github, Instagram, Twitter } from 'lucide-react'
 
 
 const columns = [
@@ -47,13 +47,13 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3">
               <a href="#" className="w-8 h-8 bg-dark-600 hover:bg-dark-500 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all">
-                <MessageCircle className="w-3.5 h-3.5" />
+                <Twitter className="w-3.5 h-3.5" />
               </a>
               <a href="#" className="w-8 h-8 bg-dark-600 hover:bg-dark-500 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all">
-                <Camera className="w-3.5 h-3.5" />
+                <Instagram className="w-3.5 h-3.5" />
               </a>
               <a href="#" className="w-8 h-8 bg-dark-600 hover:bg-dark-500 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all">
-                <GitBranch className="w-3.5 h-3.5" />
+                <Github className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>
