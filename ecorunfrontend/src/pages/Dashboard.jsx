@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  Leaf, Trophy, Flame, MapPin, TrendingUp, Share2,
-  ChevronRight, Star, Medal, Target
+  Leaf, Trophy, Flame, MapPin, Wind, Share2,
+  ChevronRight, Sparkles, Medal, Target
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { runService } from '../services/runService'
@@ -135,7 +135,7 @@ export default function Dashboard() {
             <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
                 { label: 'Trees saved',    value: user?.treesaved,              icon: Leaf,      color: 'text-emerald-400' },
-                { label: 'kg CO₂ avoided', value: `${user?.co2Avoided ?? 0}kg`, icon: TrendingUp, color: 'text-blue-400' },
+                { label: 'kg CO₂ avoided', value: `${user?.co2Avoided ?? 0}kg`, icon: Wind, color: 'text-blue-400' },
                 { label: 'Seville rank',   value: user?.rank ? `#${user.rank}` : '—', icon: Trophy, color: 'text-yellow-400' },
                 { label: 'Day streak',     value: `${user?.streak ?? 0}🔥`,     icon: Flame,     color: 'text-orange-400' },
               ].map((item) => (
@@ -316,10 +316,10 @@ export default function Dashboard() {
           transition={{ delay: 0.45 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6"
         >
-          <StatCard icon={TrendingUp} label="Total kilometers"  value={`${user?.totalKm ?? 0} km`}         color="blue" />
+          <StatCard icon={MapPin}     label="Total kilometers"  value={`${user?.totalKm ?? 0} km`}         color="blue" />
           <StatCard icon={Flame}      label="Total runs"        value={user?.totalRuns ?? runs.length}      color="orange" />
-          <StatCard icon={Leaf}       label="CO₂ impact"        value={`${user?.co2Avoided ?? 0} kg`}       color="green" />
-          <StatCard icon={Star}       label="Current level"     value={`Level ${user?.level ?? 1}`} sub={`${user?.levelProgress ?? 0}% completed`} color="yellow" />
+          <StatCard icon={Wind}       label="CO₂ impact"        value={`${user?.co2Avoided ?? 0} kg`}       color="green" />
+          <StatCard icon={Sparkles}   label="Current level"     value={`Level ${user?.level ?? 1}`} sub={`${user?.levelProgress ?? 0}% completed`} color="yellow" />
         </motion.div>
 
       </div>
