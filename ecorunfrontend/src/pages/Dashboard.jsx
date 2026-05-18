@@ -8,7 +8,8 @@ import {
 import { useAuth } from '../context/AuthContext'
 import { runService } from '../services/runService'
 import { challengeService } from '../services/challengeService'
-import { mockAchievements, mockRanking } from '../data/mock'
+import { userService } from '../services/userService'
+import { mockAchievements } from '../data/mock'
 import ProgressBar from '../components/ui/ProgressBar'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
@@ -50,6 +51,7 @@ export default function Dashboard() {
   const { user } = useAuth()
   const [runs, setRuns] = useState([])
   const [nextChallenge, setNextChallenge] = useState(null)
+  const [ranking, setRanking] = useState([])
   const unlockedAchievements = mockAchievements.filter(a => a.unlocked)
 
   useEffect(() => {
@@ -61,10 +63,12 @@ export default function Dashboard() {
 
     challengeService.getAll()
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setNextChallenge(data[0])
-        }
+        if (Array.isArray(data) && data.length > 0) setNextChallenge(data[0])
       })
+      .catch(() => {})
+
+    userService.getRanking(3)
+      .then((data) => setRanking(Array.isArray(data) ? data : []))
       .catch(() => {})
   }, [user?.id])
 
@@ -278,14 +282,14 @@ export default function Dashboard() {
                 <Medal className="w-4 h-4 text-yellow-400" />
               </div>
               <div className="flex flex-col gap-2">
-                {mockRanking.slice(0, 3).map((r) => (
+                {ranking.map((r) => (
                   <div key={r.rank} className="flex items-center gap-3 p-2 rounded-lg">
                     <span className="text-xs font-black w-6 text-center text-yellow-400">#{r.rank}</span>
                     <div className="w-7 h-7 bg-dark-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
                       {r.name[0]}
                     </div>
                     <span className="flex-1 text-sm text-gray-300">{r.name}</span>
-                    <span className="text-xs text-gray-500">{r.points.toLocaleString()}</span>
+                    <span className="text-xs text-gray-500">{r.eco_points.toLocaleString()}</span>
                   </div>
                 ))}
                 <div className="border-t border-dark-500 pt-2 mt-1">
