@@ -1,22 +1,49 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Filter, MapPin, Zap, Users, Trophy, ChevronRight } from 'lucide-react'
-import { mockChallenges } from '../data/mock'
+import { challengeService } from '../services/challengeService'
 import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
 
 const ZONES = ['All', 'Norte', 'Sur', 'Centro', 'Triana', 'Este']
-const TYPES = ['All', 'route', 'sprint', 'marathon']
+const TYPES = ['All', 'distance', 'count']
 
 const statusConfig = {
   in_progress: { label: 'In progress', variant: 'blue' },
-  completed: { label: 'Completed', variant: 'green' },
-  available: { label: 'Available', variant: 'gray' },
+  completed:   { label: 'Completed',   variant: 'green' },
+  available:   { label: 'Available',   variant: 'gray' },
+  pending:     { label: 'Available',   variant: 'gray' },
+}
+
+const CATEGORY_ICONS = {
+  Distancia:  '🏃',
+  Frecuencia: '🔥',
+  Velocidad:  '⚡',
+  Iniciación: '🌱',
+}
+
+function normalizeChallenge(c) {
+  return {
+    id: c.id,
+    name: c.name,
+    description: c.description,
+    location: c.zone ? `${c.zone}, Sevilla` : 'Sevilla',
+    zone: c.zone || null,
+    distance: parseFloat(c.goal_value),
+    type: c.goal_type,
+    status: c.status || 'available',
+    progress: c.progress ?? 0,
+    ecoPoints: c.reward_points,
+    participants: c.participants ?? 0,
+    icon: CATEGORY_ICONS[c.category] || '🏅',
+    tags: [c.category, c.difficulty, c.goal_type].filter(Boolean),
+    difficulty: c.difficulty,
+  }
 }
 
 function ChallengeCard({ challenge, index }) {
-  const status = statusConfig[challenge.status]
+  const status = statusConfig[challenge.status] || statusConfig.available
 
   return (
     <motion.div
@@ -66,7 +93,7 @@ function ChallengeCard({ challenge, index }) {
       </div>
 
       {/* Progress */}
-      {challenge.status !== 'available' && (
+      {challenge.status !== 'available' && challenge.status !== 'pending' && (
         <div>
           <div className="flex justify-between text-xs text-gray-500 mb-1.5">
             <span>Progress</span>
@@ -99,22 +126,35 @@ function ChallengeCard({ challenge, index }) {
 }
 
 export default function Challenges() {
+  const [challenges, setChallenges] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
   const [zone, setZone] = useState('All')
   const [type, setType] = useState('All')
 
+  useEffect(() => {
+    challengeService.getAll()
+      .then((data) => {
+        const normalized = Array.isArray(data) ? data.map(normalizeChallenge) : []
+        setChallenges(normalized)
+      })
+      .catch(() => setError('Could not load challenges. Check your connection.'))
+      .finally(() => setLoading(false))
+  }, [])
+
   const filtered = useMemo(() => {
-    return mockChallenges.filter((c) => {
+    return challenges.filter((c) => {
       const matchSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
         c.location.toLowerCase().includes(search.toLowerCase())
       const matchZone = zone === 'All' || c.zone === zone
       const matchType = type === 'All' || c.type === type
       return matchSearch && matchZone && matchType
     })
-  }, [search, zone, type])
+  }, [challenges, search, zone, type])
 
-  const totalParticipants = mockChallenges.reduce((acc, c) => acc + c.participants, 0)
-  const activeCount = mockChallenges.filter(c => c.status !== 'completed').length
+  const activeCount = challenges.filter(c => c.status !== 'completed').length
+  const totalParticipants = challenges.reduce((acc, c) => acc + c.participants, 0)
 
   return (
     <div className="min-h-screen bg-dark-900">
@@ -139,7 +179,6 @@ export default function Challenges() {
           className="bg-dark-700 border border-dark-500 rounded-2xl p-4 mb-6"
         >
           <div className="flex flex-col sm:flex-row gap-3">
-            {/* Search */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
@@ -150,8 +189,6 @@ export default function Challenges() {
                 className="w-full bg-dark-600 border border-dark-400 text-white placeholder-gray-600 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
               />
             </div>
-
-            {/* Zone filter */}
             <div className="flex gap-2 flex-wrap">
               {ZONES.map((z) => (
                 <button
@@ -167,8 +204,6 @@ export default function Challenges() {
                 </button>
               ))}
             </div>
-
-            {/* Type filter */}
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
@@ -193,45 +228,62 @@ export default function Challenges() {
           </div>
         </div>
 
-        {/* Grid */}
-        {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-            {filtered.map((challenge, i) => (
-              <ChallengeCard key={challenge.id} challenge={challenge} index={i} />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="text-5xl mb-4">🏃</div>
-            <h3 className="text-xl font-bold text-white mb-2">No challenges</h3>
-            <p className="text-gray-500 text-sm max-w-sm">
-              No challenges found with those filters. Try different parameters.
-            </p>
-            <Button variant="ghost" size="sm" className="mt-4" onClick={() => { setSearch(''); setZone('All'); setType('All') }}>
-              Clear filters
-            </Button>
+        {/* States */}
+        {loading && (
+          <div className="flex justify-center py-20">
+            <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
           </div>
         )}
 
-        {/* Footer stats */}
-        <div className="bg-dark-700 border border-dark-500 rounded-2xl p-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { icon: Zap, label: 'Active challenges', value: activeCount, color: 'text-blue-400' },
-              { icon: Users, label: 'Participating runners', value: totalParticipants.toLocaleString(), color: 'text-emerald-400' },
-              { icon: Trophy, label: 'Completed (you)', value: mockChallenges.filter(c => c.status === 'completed').length, color: 'text-yellow-400' },
-              { icon: MapPin, label: 'Seville zones', value: ZONES.length - 1, color: 'text-orange-400' },
-            ].map((stat) => (
-              <div key={stat.label} className="flex items-center gap-3">
-                <stat.icon className={`w-5 h-5 ${stat.color} flex-shrink-0`} />
-                <div>
-                  <div className="text-lg font-black text-white">{stat.value}</div>
-                  <div className="text-xs text-gray-500">{stat.label}</div>
-                </div>
-              </div>
-            ))}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 text-center mb-8">
+            <p className="text-red-400 text-sm">{error}</p>
           </div>
-        </div>
+        )}
+
+        {/* Grid */}
+        {!loading && !error && (
+          filtered.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+              {filtered.map((challenge, i) => (
+                <ChallengeCard key={challenge.id} challenge={challenge} index={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="text-5xl mb-4">🏃</div>
+              <h3 className="text-xl font-bold text-white mb-2">No challenges</h3>
+              <p className="text-gray-500 text-sm max-w-sm">
+                No challenges found with those filters. Try different parameters.
+              </p>
+              <Button variant="ghost" size="sm" className="mt-4" onClick={() => { setSearch(''); setZone('All'); setType('All') }}>
+                Clear filters
+              </Button>
+            </div>
+          )
+        )}
+
+        {/* Footer stats */}
+        {!loading && (
+          <div className="bg-dark-700 border border-dark-500 rounded-2xl p-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { icon: Zap,    label: 'Active challenges',    value: activeCount,                      color: 'text-blue-400' },
+                { icon: Users,  label: 'Participating runners', value: totalParticipants.toLocaleString(), color: 'text-emerald-400' },
+                { icon: Trophy, label: 'Total challenges',      value: challenges.length,                 color: 'text-yellow-400' },
+                { icon: MapPin, label: 'Seville zones',         value: `${ZONES.length - 1} zones`,       color: 'text-orange-400' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex items-center gap-3">
+                  <stat.icon className={`w-5 h-5 ${stat.color} flex-shrink-0`} />
+                  <div>
+                    <div className="text-lg font-black text-white">{stat.value}</div>
+                    <div className="text-xs text-gray-500">{stat.label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
