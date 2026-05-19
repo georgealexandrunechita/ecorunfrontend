@@ -11,12 +11,14 @@ import Challenges from './pages/Challenges'
 import ChallengeMap from './pages/ChallengeMap'
 import ChallengeDetail from './pages/ChallengeDetail'
 import LogRun from './pages/LogRun'
+import CustomCursor from './components/ui/CustomCursor'
 import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <CustomCursor />
         <Routes>
           {/* Public */}
           <Route element={<PublicLayout />}>
