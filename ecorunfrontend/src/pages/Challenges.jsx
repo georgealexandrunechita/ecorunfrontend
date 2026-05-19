@@ -19,15 +19,17 @@ const statusConfig = {
   pending:     { label: 'Available',   variant: 'gray' },
 }
 
-const CATEGORY_ICONS = {
-  Distancia:  Activity,
-  Frecuencia: Repeat,
-  Velocidad:  Timer,
-  Iniciación: Sprout,
+const CATEGORY_STYLE = {
+  Distancia:  { icon: Activity, color: 'text-blue-400',    bg: 'bg-blue-500/10',    border: 'from-blue-500/50',    glow: 'group-hover:shadow-[0_8px_32px_rgba(59,130,246,0.15)]' },
+  Frecuencia: { icon: Repeat,   color: 'text-purple-400',  bg: 'bg-purple-500/10',  border: 'from-purple-500/50',  glow: 'group-hover:shadow-[0_8px_32px_rgba(168,85,247,0.15)]' },
+  Velocidad:  { icon: Timer,    color: 'text-orange-400',  bg: 'bg-orange-500/10',  border: 'from-orange-500/50',  glow: 'group-hover:shadow-[0_8px_32px_rgba(249,115,22,0.15)]' },
+  Iniciación: { icon: Sprout,   color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'from-emerald-500/50', glow: 'group-hover:shadow-[0_8px_32px_rgba(16,185,129,0.15)]' },
 }
 
-function getCategoryIcon(category) {
-  return CATEGORY_ICONS[category] || Award
+const DEFAULT_STYLE = { icon: Award, color: 'text-gray-400', bg: 'bg-gray-500/10', border: 'from-gray-500/50', glow: '' }
+
+function getCategoryStyle(category) {
+  return CATEGORY_STYLE[category] || DEFAULT_STYLE
 }
 
 function normalizeChallenge(c) {
@@ -50,13 +52,14 @@ function normalizeChallenge(c) {
 }
 
 function ChallengeCard({ challenge, index, onOpen }) {
-  const status = statusConfig[challenge.status] || statusConfig.available
-  const CategoryIcon = getCategoryIcon(challenge.category)
+  const status   = statusConfig[challenge.status] || statusConfig.available
+  const catStyle = getCategoryStyle(challenge.category)
+  const Icon     = catStyle.icon
 
-  const x = useMotionValue(0)
-  const cardOpacity = useTransform(x, [-120, 0, 120], [0.4, 1, 0.4])
+  const x               = useMotionValue(0)
+  const cardOpacity     = useTransform(x, [-120, 0, 120], [0.5, 1, 0.5])
   const rightHintOpacity = useTransform(x, [0, 60], [0, 1])
-  const leftHintOpacity = useTransform(x, [-60, 0], [1, 0])
+  const leftHintOpacity  = useTransform(x, [-60, 0], [1, 0])
 
   function handleDragEnd(_, info) {
     if (info.offset.x > 80) onOpen(challenge)
@@ -66,97 +69,102 @@ function ChallengeCard({ challenge, index, onOpen }) {
     <div className="relative overflow-hidden rounded-2xl">
       {/* Swipe hints */}
       <motion.div style={{ opacity: rightHintOpacity }}
-        className="absolute inset-0 bg-blue-600/20 rounded-2xl flex items-center justify-start pl-6 pointer-events-none z-10">
+        className="absolute inset-0 bg-blue-600/15 rounded-2xl flex items-center justify-start pl-6 pointer-events-none z-10">
         <span className="text-blue-400 font-bold text-sm">View →</span>
       </motion.div>
       <motion.div style={{ opacity: leftHintOpacity }}
-        className="absolute inset-0 bg-dark-600/60 rounded-2xl flex items-center justify-end pr-6 pointer-events-none z-10">
-        <span className="text-gray-400 font-bold text-sm">← Skip</span>
+        className="absolute inset-0 bg-dark-600/50 rounded-2xl flex items-center justify-end pr-6 pointer-events-none z-10">
+        <span className="text-gray-500 font-bold text-sm">← Skip</span>
       </motion.div>
 
-    <motion.div
-      style={{ x, opacity: cardOpacity }}
-      drag="x"
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.3}
-      dragSnapToOrigin
-      onDragEnd={handleDragEnd}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="bg-dark-700 border border-dark-500 hover:border-blue-600/40 rounded-2xl p-5 flex flex-col gap-4 transition-colors duration-300 hover:shadow-card-hover cursor-grab active:cursor-grabbing relative z-20"
-    >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-            <CategoryIcon className="w-6 h-6 text-blue-400" />
-          </div>
-          <div>
-            <h3 className="font-bold text-white text-sm leading-tight mb-1">{challenge.name}</h3>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <MapPin className="w-3 h-3" />
-              {challenge.location}
+      <motion.div
+        style={{ x, opacity: cardOpacity }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.3}
+        dragSnapToOrigin
+        onDragEnd={handleDragEnd}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -6 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ delay: index * 0.05 }}
+        onClick={() => onOpen(challenge)}
+        className={`group relative bg-dark-700/70 backdrop-blur-sm border border-dark-500/80 rounded-2xl p-5 flex flex-col gap-4 cursor-grab active:cursor-grabbing z-20 transition-shadow duration-300 ${catStyle.glow}`}
+      >
+        {/* Top gradient border by category */}
+        <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${catStyle.border} to-transparent`} />
+
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className={`w-11 h-11 ${catStyle.bg} rounded-xl flex items-center justify-center flex-shrink-0`}>
+              <Icon className={`w-5 h-5 ${catStyle.color}`} />
+            </div>
+            <div>
+              <h3 className="font-bold text-white text-sm leading-tight mb-0.5">{challenge.name}</h3>
+              <div className="flex items-center gap-1 text-xs text-gray-500">
+                <MapPin className="w-3 h-3" />
+                {challenge.location}
+              </div>
             </div>
           </div>
+          <Badge variant={status.variant}>{status.label}</Badge>
         </div>
-        <Badge variant={status.variant}>{status.label}</Badge>
-      </div>
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-1.5">
-        {challenge.tags.map((tag) => (
-          <span key={tag} className="text-xs bg-dark-600 text-gray-400 px-2 py-0.5 rounded-full">{tag}</span>
-        ))}
-      </div>
+        {/* Difficulty tags */}
+        <div className="flex gap-1.5">
+          {[challenge.difficulty, challenge.type].filter(Boolean).map((tag) => (
+            <span key={tag} className="text-[10px] font-semibold uppercase tracking-wide bg-dark-600/80 text-gray-500 px-2 py-0.5 rounded-full">
+              {tag}
+            </span>
+          ))}
+        </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-2">
-        <div className="text-center bg-dark-800/60 rounded-xl p-2">
-          <div className="text-sm font-bold text-white">{challenge.distance} km</div>
-          <div className="text-xs text-gray-600">Distance</div>
-        </div>
-        <div className="text-center bg-dark-800/60 rounded-xl p-2">
-          <div className="text-sm font-bold text-yellow-400">{challenge.ecoPoints}</div>
-          <div className="text-xs text-gray-600">EcoPts</div>
-        </div>
-        <div className="text-center bg-dark-800/60 rounded-xl p-2">
-          <div className="text-sm font-bold text-white">{challenge.participants}</div>
-          <div className="text-xs text-gray-600">Runners</div>
-        </div>
-      </div>
-
-      {/* Progress */}
-      {challenge.status !== 'available' && challenge.status !== 'pending' && (
-        <div>
-          <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-            <span>Progress</span>
-            <span>{challenge.progress}%</span>
+        {/* Stats inline */}
+        <div className="flex items-center justify-between border-t border-dark-500/50 pt-3">
+          <div className="text-center">
+            <div className={`text-base font-black ${catStyle.color}`}>{challenge.distance} km</div>
+            <div className="text-[10px] text-gray-600 uppercase tracking-wide">Goal</div>
           </div>
-          <ProgressBar
-            value={challenge.progress}
-            color={challenge.status === 'completed' ? 'green' : 'blue'}
-          />
+          <div className="w-px h-6 bg-dark-500" />
+          <div className="text-center">
+            <div className="text-base font-black text-yellow-400">{challenge.ecoPoints}</div>
+            <div className="text-[10px] text-gray-600 uppercase tracking-wide">EcoPts</div>
+          </div>
+          <div className="w-px h-6 bg-dark-500" />
+          <div className="text-center">
+            <div className="text-base font-black text-white">{challenge.participants}</div>
+            <div className="text-[10px] text-gray-600 uppercase tracking-wide">Runners</div>
+          </div>
         </div>
-      )}
 
-      {/* Action */}
-      <Button
-        variant={challenge.status === 'completed' ? 'ghost' : 'primary'}
-        size="sm"
-        fullWidth
-        className="mt-auto"
-        onClick={() => onOpen(challenge)}
-      >
-        {challenge.status === 'completed' ? (
-          <>View summary <ChevronRight className="w-4 h-4" /></>
-        ) : challenge.status === 'in_progress' ? (
-          <>Continue <ChevronRight className="w-4 h-4" /></>
-        ) : (
-          <>Start challenge <Zap className="w-4 h-4" /></>
+        {/* Progress */}
+        {challenge.status === 'in_progress' && (
+          <div>
+            <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+              <span>Progress</span>
+              <span className="text-white font-semibold">{challenge.progress}%</span>
+            </div>
+            <ProgressBar value={challenge.progress} color="blue" />
+          </div>
         )}
-      </Button>
-    </motion.div>
+
+        {challenge.status === 'completed' && (
+          <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2">
+            <Trophy className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+            <span className="text-xs text-emerald-400 font-semibold">Completed · +{challenge.ecoPoints} pts earned</span>
+          </div>
+        )}
+
+        {/* CTA hint */}
+        <div className={`flex items-center justify-between text-xs font-semibold ${catStyle.color} opacity-60 group-hover:opacity-100 transition-opacity`}>
+          <span>
+            {challenge.status === 'completed' ? 'View summary' : challenge.status === 'in_progress' ? 'Continue' : 'Tap to join'}
+          </span>
+          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+        </div>
+      </motion.div>
     </div>
   )
 }

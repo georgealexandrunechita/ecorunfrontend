@@ -1,8 +1,8 @@
 const variants = {
-  primary: 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-glow hover:shadow-blue-glow',
-  secondary: 'bg-transparent border border-blue-600 hover:bg-blue-600/10 text-blue-400',
-  ghost: 'bg-white/5 hover:bg-white/10 text-white',
-  danger: 'bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/40',
+  primary:   'bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 text-white shadow-blue-glow hover:shadow-[0_0_32px_rgba(59,130,246,0.5)] border border-blue-400/20',
+  secondary: 'bg-transparent border border-blue-600/60 hover:border-blue-500 hover:bg-blue-600/10 text-blue-400',
+  ghost:     'bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/10 text-white',
+  danger:    'bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/40',
 }
 
 const sizes = {
