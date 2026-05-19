@@ -1,12 +1,13 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Search, Filter, MapPin, Zap, Users, Trophy, ChevronRight, Activity, Repeat, Timer, Sprout, Award, Target } from 'lucide-react'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { Search, Filter, MapPin, Zap, Users, Trophy, ChevronRight, Activity, Repeat, Timer, Sprout, Award, Target, Calendar } from 'lucide-react'
 import { challengeService } from '../services/challengeService'
 import { useAuth } from '../context/AuthContext'
 import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
+import BottomSheet from '../components/ui/BottomSheet'
 
 const ZONES = ['All', 'Norte', 'Sur', 'Centro', 'Triana', 'Este']
 const TYPES = ['All', 'distance', 'count']
@@ -48,17 +49,42 @@ function normalizeChallenge(c) {
   }
 }
 
-function ChallengeCard({ challenge, index }) {
-  const navigate = useNavigate()
+function ChallengeCard({ challenge, index, onOpen }) {
   const status = statusConfig[challenge.status] || statusConfig.available
   const CategoryIcon = getCategoryIcon(challenge.category)
 
+  const x = useMotionValue(0)
+  const cardOpacity = useTransform(x, [-120, 0, 120], [0.4, 1, 0.4])
+  const rightHintOpacity = useTransform(x, [0, 60], [0, 1])
+  const leftHintOpacity = useTransform(x, [-60, 0], [1, 0])
+
+  function handleDragEnd(_, info) {
+    if (info.offset.x > 80) onOpen(challenge)
+  }
+
   return (
+    <div className="relative overflow-hidden rounded-2xl">
+      {/* Swipe hints */}
+      <motion.div style={{ opacity: rightHintOpacity }}
+        className="absolute inset-0 bg-blue-600/20 rounded-2xl flex items-center justify-start pl-6 pointer-events-none z-10">
+        <span className="text-blue-400 font-bold text-sm">View →</span>
+      </motion.div>
+      <motion.div style={{ opacity: leftHintOpacity }}
+        className="absolute inset-0 bg-dark-600/60 rounded-2xl flex items-center justify-end pr-6 pointer-events-none z-10">
+        <span className="text-gray-400 font-bold text-sm">← Skip</span>
+      </motion.div>
+
     <motion.div
+      style={{ x, opacity: cardOpacity }}
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.3}
+      dragSnapToOrigin
+      onDragEnd={handleDragEnd}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="bg-dark-700 border border-dark-500 hover:border-blue-600/40 rounded-2xl p-5 flex flex-col gap-4 transition-all duration-300 hover:shadow-card-hover group"
+      className="bg-dark-700 border border-dark-500 hover:border-blue-600/40 rounded-2xl p-5 flex flex-col gap-4 transition-colors duration-300 hover:shadow-card-hover cursor-grab active:cursor-grabbing relative z-20"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
@@ -120,7 +146,7 @@ function ChallengeCard({ challenge, index }) {
         size="sm"
         fullWidth
         className="mt-auto"
-        onClick={() => navigate(`/challenges/${challenge.id}`)}
+        onClick={() => onOpen(challenge)}
       >
         {challenge.status === 'completed' ? (
           <>View summary <ChevronRight className="w-4 h-4" /></>
@@ -131,17 +157,21 @@ function ChallengeCard({ challenge, index }) {
         )}
       </Button>
     </motion.div>
+    </div>
   )
 }
 
 export default function Challenges() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [challenges, setChallenges] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
   const [zone, setZone] = useState('All')
   const [type, setType] = useState('All')
+  const [selected, setSelected] = useState(null)
+  const [joining, setJoining] = useState(false)
 
   useEffect(() => {
     const allChallenges = challengeService.getAll()
@@ -175,6 +205,20 @@ export default function Challenges() {
       return matchSearch && matchZone && matchType
     })
   }, [challenges, search, zone, type])
+
+  async function handleJoin() {
+    if (!selected) return
+    setJoining(true)
+    try {
+      await challengeService.join(selected.id)
+      setChallenges((prev) =>
+        prev.map((c) => c.id === selected.id ? { ...c, status: 'in_progress', progress: 0 } : c)
+      )
+      setSelected((s) => s ? { ...s, status: 'in_progress', progress: 0 } : null)
+    } finally {
+      setJoining(false)
+    }
+  }
 
   const activeCount = challenges.filter(c => c.status !== 'completed').length
   const totalParticipants = challenges.reduce((acc, c) => acc + c.participants, 0)
@@ -269,7 +313,7 @@ export default function Challenges() {
           filtered.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
               {filtered.map((challenge, i) => (
-                <ChallengeCard key={challenge.id} challenge={challenge} index={i} />
+                <ChallengeCard key={challenge.id} challenge={challenge} index={i} onOpen={setSelected} />
               ))}
             </div>
           ) : (
@@ -308,6 +352,88 @@ export default function Challenges() {
           </div>
         )}
       </div>
+
+      {/* Challenge bottom sheet */}
+      <BottomSheet open={!!selected} onClose={() => setSelected(null)}>
+        {selected && (
+          <div className="px-5 pb-8 pt-2">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <h2 className="text-xl font-black text-white mb-1">{selected.name}</h2>
+                <div className="flex items-center gap-1 text-sm text-gray-500">
+                  <MapPin className="w-3.5 h-3.5" />
+                  {selected.location}
+                </div>
+              </div>
+              <Badge variant={(statusConfig[selected.status] || statusConfig.available).variant}>
+                {(statusConfig[selected.status] || statusConfig.available).label}
+              </Badge>
+            </div>
+
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selected.tags.map((tag) => (
+                <span key={tag} className="text-xs bg-dark-600 text-gray-400 px-2.5 py-1 rounded-full">{tag}</span>
+              ))}
+            </div>
+
+            {/* Description */}
+            {selected.description && (
+              <p className="text-gray-400 text-sm leading-relaxed mb-4">{selected.description}</p>
+            )}
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {[
+                { label: 'Distance', value: `${selected.distance} km`,  color: 'text-white' },
+                { label: 'EcoPoints', value: `${selected.ecoPoints} pts`, color: 'text-yellow-400' },
+                { label: 'Runners',  value: selected.participants,        color: 'text-emerald-400' },
+              ].map((s) => (
+                <div key={s.label} className="bg-dark-700 rounded-xl p-3 text-center">
+                  <div className={`text-base font-black ${s.color}`}>{s.value}</div>
+                  <div className="text-xs text-gray-500">{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Progress */}
+            {selected.status === 'in_progress' && (
+              <div className="mb-4">
+                <div className="flex justify-between text-xs text-gray-500 mb-2">
+                  <span>Your progress</span>
+                  <span className="text-white font-bold">{selected.progress}%</span>
+                </div>
+                <ProgressBar value={selected.progress} color="blue" />
+              </div>
+            )}
+
+            {selected.status === 'completed' && (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-4 text-center">
+                <p className="text-emerald-400 font-bold">🏆 Challenge completed!</p>
+                <p className="text-xs text-gray-500 mt-1">+{selected.ecoPoints} EcoPoints earned</p>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex flex-col gap-2">
+              {selected.status === 'available' && (
+                <Button fullWidth onClick={handleJoin} disabled={joining}>
+                  {joining ? 'Joining...' : <><Zap className="w-4 h-4" /> Join challenge</>}
+                </Button>
+              )}
+              {selected.status === 'in_progress' && (
+                <Button fullWidth onClick={() => { setSelected(null); navigate('/runs/log') }}>
+                  <ChevronRight className="w-4 h-4" /> Log a run
+                </Button>
+              )}
+              <Button variant="ghost" fullWidth onClick={() => { setSelected(null); navigate(`/challenges/${selected.id}`) }}>
+                View full detail
+              </Button>
+            </div>
+          </div>
+        )}
+      </BottomSheet>
     </div>
   )
 }
