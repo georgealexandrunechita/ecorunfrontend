@@ -9,7 +9,6 @@ import { useAuth } from '../context/AuthContext'
 import { runService } from '../services/runService'
 import { challengeService } from '../services/challengeService'
 import { userService } from '../services/userService'
-import { mockAchievements } from '../data/mock'
 import ProgressBar from '../components/ui/ProgressBar'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
@@ -52,7 +51,7 @@ export default function Dashboard() {
   const [runs, setRuns] = useState([])
   const [nextChallenge, setNextChallenge] = useState(null)
   const [ranking, setRanking] = useState([])
-  const unlockedAchievements = mockAchievements.filter(a => a.unlocked)
+  const [achievements, setAchievements] = useState([])
 
   useEffect(() => {
     if (!user?.id) return
@@ -69,6 +68,10 @@ export default function Dashboard() {
 
     userService.getRanking(3)
       .then((data) => setRanking(Array.isArray(data) ? data : []))
+      .catch(() => {})
+
+    userService.getAchievements(user.id)
+      .then((data) => setAchievements(Array.isArray(data) ? data : []))
       .catch(() => {})
   }, [user?.id])
 
@@ -255,7 +258,7 @@ export default function Dashboard() {
             >
               <h2 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">Achievements</h2>
               <div className="flex flex-wrap gap-2 mb-3">
-                {mockAchievements.map((a) => (
+                {achievements.map((a) => (
                   <div
                     key={a.id}
                     title={a.name}
@@ -267,7 +270,7 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-500">{unlockedAchievements.length}/{mockAchievements.length} unlocked</p>
+              <p className="text-xs text-gray-500">{achievements.filter(a => a.unlocked).length}/{achievements.length} unlocked</p>
             </motion.div>
 
             {/* Ranking */}
