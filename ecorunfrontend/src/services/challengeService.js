@@ -10,6 +10,6 @@ export const challengeService = {
   join: (id) =>
     api.post(`/challenges/${id}/join`),
 
-  getMyProgress: () =>
-    api.get('/challenges/my-progress'),
+  getUserChallenges: (userId) =>
+    api.get(`/challenges/user/${userId}`),
 }

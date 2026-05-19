@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Filter, MapPin, Zap, Users, Trophy, ChevronRight, Activity, Repeat, Timer, Sprout, Award, Target } from 'lucide-react'
 import { challengeService } from '../services/challengeService'
+import { useAuth } from '../context/AuthContext'
 import ProgressBar from '../components/ui/ProgressBar'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
@@ -46,9 +47,15 @@ function normalizeChallenge(c) {
   }
 }
 
-function ChallengeCard({ challenge, index }) {
+function ChallengeCard({ challenge, index, onJoin }) {
+  const [joining, setJoining] = useState(false)
   const status = statusConfig[challenge.status] || statusConfig.available
   const CategoryIcon = getCategoryIcon(challenge.category)
+
+  async function handleJoin() {
+    setJoining(true)
+    try { await onJoin(challenge.id) } finally { setJoining(false) }
+  }
 
   return (
     <motion.div
@@ -117,11 +124,15 @@ function ChallengeCard({ challenge, index }) {
         size="sm"
         fullWidth
         className="mt-auto"
+        onClick={challenge.status === 'available' ? handleJoin : undefined}
+        disabled={joining}
       >
         {challenge.status === 'completed' ? (
           <>View summary <ChevronRight className="w-4 h-4" /></>
         ) : challenge.status === 'in_progress' ? (
           <>Continue <ChevronRight className="w-4 h-4" /></>
+        ) : joining ? (
+          <>Joining...</>
         ) : (
           <>Start challenge <Zap className="w-4 h-4" /></>
         )}
@@ -131,6 +142,7 @@ function ChallengeCard({ challenge, index }) {
 }
 
 export default function Challenges() {
+  const { user } = useAuth()
   const [challenges, setChallenges] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -139,14 +151,33 @@ export default function Challenges() {
   const [type, setType] = useState('All')
 
   useEffect(() => {
-    challengeService.getAll()
-      .then((data) => {
-        const normalized = Array.isArray(data) ? data.map(normalizeChallenge) : []
+    const allChallenges = challengeService.getAll()
+    const userChallenges = user?.id
+      ? challengeService.getUserChallenges(user.id).catch(() => [])
+      : Promise.resolve([])
+
+    Promise.all([allChallenges, userChallenges])
+      .then(([all, mine]) => {
+        const myMap = {}
+        if (Array.isArray(mine)) {
+          mine.forEach((uc) => { myMap[uc.challenge_id] = uc })
+        }
+        const normalized = (Array.isArray(all) ? all : []).map((c) => {
+          const uc = myMap[c.id]
+          return normalizeChallenge(uc ? { ...c, status: uc.status, progress: uc.progress } : c)
+        })
         setChallenges(normalized)
       })
       .catch(() => setError('Could not load challenges. Check your connection.'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [user?.id])
+
+  async function handleJoin(challengeId) {
+    await challengeService.join(challengeId)
+    setChallenges((prev) =>
+      prev.map((c) => c.id === challengeId ? { ...c, status: 'in_progress', progress: 0 } : c)
+    )
+  }
 
   const filtered = useMemo(() => {
     return challenges.filter((c) => {
@@ -251,7 +282,7 @@ export default function Challenges() {
           filtered.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
               {filtered.map((challenge, i) => (
-                <ChallengeCard key={challenge.id} challenge={challenge} index={i} />
+                <ChallengeCard key={challenge.id} challenge={challenge} index={i} onJoin={handleJoin} />
               ))}
             </div>
           ) : (
