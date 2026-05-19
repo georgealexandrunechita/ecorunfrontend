@@ -14,12 +14,14 @@ export default function Home() {
     <div className="overflow-hidden">
       {/* HERO */}
       <section className="relative min-h-screen flex items-center">
-        {/* Background */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=1920&q=80')`,
-          }}
+        {/* Background video */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          src="https://res.cloudinary.com/dcp7o3atw/video/upload/v1779206247/12642901-hd_1920_1080_30fps_jwv2wb.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
         />
         <div className="absolute inset-0 bg-gradient-to-b from-dark-900/80 via-dark-900/60 to-dark-900" />
         <div className="absolute inset-0 bg-gradient-to-r from-dark-900/90 to-transparent" />
