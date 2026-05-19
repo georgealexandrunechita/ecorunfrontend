@@ -8,7 +8,7 @@ import { PageLoader } from '../components/ui/LoadingSpinner'
 function MobileTopBar() {
   const { user } = useAuth()
   return (
-    <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-dark-800/90 backdrop-blur-xl border-b border-dark-500/60 h-14 flex items-center px-4">
+    <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-dark-800/90 backdrop-blur-xl border-b border-dark-500/40 h-14 flex items-center px-4 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-blue-500/15 after:to-transparent relative">
       <Link to="/">
         <img
           src="https://res.cloudinary.com/dcp7o3atw/image/upload/v1777834701/ecorunlogo.png"

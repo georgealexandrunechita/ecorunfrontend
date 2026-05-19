@@ -21,7 +21,8 @@ export default function BottomTabBar() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       {/* Blur background */}
-      <div className="bg-dark-800/90 backdrop-blur-xl border-t border-dark-500/60 px-2 pb-safe">
+      <div className="relative bg-dark-800/90 backdrop-blur-xl border-t border-dark-500/40 px-2 pb-safe">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
         <div className="flex items-center justify-around h-16 max-w-lg mx-auto relative">
 
           {TABS.map((tab, i) => {
@@ -64,7 +65,7 @@ export default function BottomTabBar() {
                   key="fab"
                   whileTap={{ scale: 0.92 }}
                   onClick={() => navigate('/runs/log')}
-                  className="w-13 h-13 bg-blue-600 hover:bg-blue-500 rounded-2xl flex items-center justify-center shadow-blue-glow -mt-4 transition-colors"
+                  className="w-14 h-14 bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 rounded-2xl flex items-center justify-center shadow-blue-glow -mt-5 transition-all duration-200 border border-blue-400/20"
                 >
                   <Plus className="w-6 h-6 text-white" />
                 </motion.button>
