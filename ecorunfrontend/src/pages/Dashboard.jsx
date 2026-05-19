@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Leaf, Trophy, Flame, MapPin, Wind, Share2,
-  ChevronRight, Sparkles, Medal, Target
+  ChevronRight, Sparkles, Medal, Target, Plus
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { runService } from '../services/runService'
@@ -153,8 +153,14 @@ export default function Dashboard() {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-dark-500/50">
-            <Link to="/challenges">
+            <Link to="/runs/log">
               <Button size="sm">
+                <Plus className="w-4 h-4" />
+                Log run
+              </Button>
+            </Link>
+            <Link to="/challenges">
+              <Button variant="ghost" size="sm">
                 <Target className="w-4 h-4" />
                 View challenges
               </Button>

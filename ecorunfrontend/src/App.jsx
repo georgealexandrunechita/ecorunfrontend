@@ -9,6 +9,8 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Challenges from './pages/Challenges'
 import ChallengeMap from './pages/ChallengeMap'
+import ChallengeDetail from './pages/ChallengeDetail'
+import LogRun from './pages/LogRun'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -33,6 +35,8 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/challenges" element={<Challenges />} />
+            <Route path="/challenges/:id" element={<ChallengeDetail />} />
+            <Route path="/runs/log" element={<LogRun />} />
             <Route path="/map" element={<ChallengeMap />} />
           </Route>
 
