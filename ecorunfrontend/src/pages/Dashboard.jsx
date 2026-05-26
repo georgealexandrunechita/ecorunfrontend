@@ -56,6 +56,10 @@ const RANK_COLORS = ['text-yellow-400', 'text-gray-300', 'text-orange-400']
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const [userRank, setUserRank] = useState(null)
+  const [streak, setStreak] = useState(0)
+  const [totalKm, setTotalKm] = useState(0)
+  const [totalRuns, setTotalRuns] = useState(0)
   const [runs, setRuns] = useState([])
   const [nextChallenge, setNextChallenge] = useState(null)
   const [ranking, setRanking] = useState([])
@@ -65,7 +69,10 @@ export default function Dashboard() {
     if (!user?.id) return
 
     runService.getUserRuns(user.id)
-      .then((data) => setRuns(Array.isArray(data) ? data.slice(0, 3) : []))
+      .then((data) => {
+        const list = Array.isArray(data) ? data : (data?.data ?? [])
+        setRuns(list.slice(0, 3))
+      })
       .catch(() => setRuns([]))
 
     challengeService.getAll()
@@ -79,7 +86,13 @@ export default function Dashboard() {
       .catch(() => {})
 
     userService.getAchievements(user.id)
-      .then((data) => setAchievements(Array.isArray(data) ? data : []))
+      .then((data) => {
+        setAchievements(Array.isArray(data?.achievements) ? data.achievements : [])
+        if (data?.rank != null) setUserRank(data.rank)
+        if (data?.streak != null) setStreak(data.streak)
+        if (data?.total_km != null) setTotalKm(parseFloat(data.total_km))
+        if (data?.run_count != null) setTotalRuns(data.run_count)
+      })
       .catch(() => {})
   }, [user?.id])
 
@@ -149,8 +162,8 @@ export default function Dashboard() {
               {[
                 { label: 'Trees saved',    value: user?.treesaved ?? 0,                 icon: Leaf,   color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
                 { label: 'kg CO₂ avoided', value: `${user?.co2Avoided ?? 0}`,           icon: Wind,   color: 'text-sky-400',     bg: 'bg-sky-500/10' },
-                { label: 'Seville rank',   value: user?.rank ? `#${user.rank}` : '—',   icon: Trophy, color: 'text-yellow-400',  bg: 'bg-yellow-500/10' },
-                { label: 'Day streak',     value: user?.streak ?? 0,                    icon: Flame,  color: 'text-orange-400',  bg: 'bg-orange-500/10' },
+                { label: 'Seville rank',   value: userRank != null ? `#${userRank}` : '—',   icon: Trophy, color: 'text-yellow-400',  bg: 'bg-yellow-500/10' },
+                { label: 'Day streak',     value: streak,                    icon: Flame,  color: 'text-orange-400',  bg: 'bg-orange-500/10' },
               ].map((item) => (
                 <div key={item.label} className={`${item.bg} rounded-2xl p-4 text-center border border-white/[0.04]`}>
                   <item.icon className={`w-4 h-4 mx-auto mb-2 ${item.color}`} />
@@ -185,9 +198,14 @@ export default function Dashboard() {
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-white">Recent runs</h2>
-              <Link to="/runs/log" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
-                Log new <ChevronRight className="w-3 h-3" />
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link to="/runs" className="text-xs text-gray-500 hover:text-gray-300 flex items-center gap-1 transition-colors">
+                  View all <ChevronRight className="w-3 h-3" />
+                </Link>
+                <Link to="/runs/log" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
+                  Log new <ChevronRight className="w-3 h-3" />
+                </Link>
+              </div>
             </div>
 
             {runs.length > 0 ? (
@@ -302,7 +320,7 @@ export default function Dashboard() {
                 <div className="mt-1 pt-2 border-t border-dark-500/50">
                   <div className="flex items-center gap-3 px-2 py-2 rounded-xl bg-blue-600/10 border border-blue-600/20">
                     <span className="text-xs font-black w-5 text-center text-blue-400">
-                      {user?.rank ? `#${user.rank}` : '—'}
+                      {userRank != null ? `#${userRank}` : '—'}
                     </span>
                     <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                       {user?.name?.[0]}
@@ -321,8 +339,8 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5"
         >
-          <StatCard icon={MapPin}   label="Total distance"  value={`${user?.totalKm ?? 0} km`}       color="blue" />
-          <StatCard icon={Flame}    label="Total runs"       value={user?.totalRuns ?? runs.length}    color="orange" />
+          <StatCard icon={MapPin}   label="Total distance"  value={`${totalKm.toFixed(1)} km`}  color="blue" />
+          <StatCard icon={Flame}    label="Total runs"       value={totalRuns}                    color="orange" />
           <StatCard icon={Wind}     label="CO₂ saved"        value={`${user?.co2Avoided ?? 0} kg`}    color="green" />
           <StatCard icon={Sparkles} label="Current level"    value={`Lvl ${user?.level ?? 1}`}        color="yellow"
             sub={`${user?.levelProgress ?? 0}% to next`} />

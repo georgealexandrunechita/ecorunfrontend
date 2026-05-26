@@ -32,6 +32,7 @@ export default function Navbar() {
     { to: '/dashboard', label: 'Dashboard' },
     { to: '/challenges', label: 'Challenges' },
     { to: '/map', label: 'Map' },
+    { to: '/ranking', label: 'Ranking' },
   ]
 
   const links = user ? appLinks : publicLinks

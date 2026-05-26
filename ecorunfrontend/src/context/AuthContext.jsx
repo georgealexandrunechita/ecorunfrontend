@@ -66,13 +66,22 @@ export function AuthProvider({ children }) {
     return userData
   }
 
+  const updateEcoPoints = (newTotal) => {
+    setUser((prev) => {
+      if (!prev) return prev
+      const updated = { ...prev, ecoPoints: newTotal }
+      localStorage.setItem('ecorun_user', JSON.stringify(updated))
+      return updated
+    })
+  }
+
   const logout = () => {
     authService.logout()
     setUser(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, updateEcoPoints }}>
       {children}
     </AuthContext.Provider>
   )

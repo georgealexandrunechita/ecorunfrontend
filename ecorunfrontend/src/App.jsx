@@ -11,6 +11,8 @@ import Challenges from './pages/Challenges'
 import ChallengeMap from './pages/ChallengeMap'
 import ChallengeDetail from './pages/ChallengeDetail'
 import LogRun from './pages/LogRun'
+import Ranking from './pages/Ranking'
+import MyRuns from './pages/MyRuns'
 import CustomCursor from './components/ui/CustomCursor'
 import NotFound from './pages/NotFound'
 
@@ -40,6 +42,8 @@ export default function App() {
             <Route path="/challenges/:id" element={<ChallengeDetail />} />
             <Route path="/runs/log" element={<LogRun />} />
             <Route path="/map" element={<ChallengeMap />} />
+            <Route path="/ranking" element={<Ranking />} />
+            <Route path="/runs" element={<MyRuns />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

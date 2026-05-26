@@ -33,7 +33,7 @@ function NumInput({ icon: Icon, placeholder, step, min, value, onChange, error }
 }
 
 export default function LogRun() {
-  const { user } = useAuth()
+  const { user, updateEcoPoints } = useAuth()
   const navigate = useNavigate()
 
   const [form, setForm] = useState({
@@ -73,7 +73,7 @@ export default function LogRun() {
     const endDateTime = `${form.run_date}T${String(8 + Math.floor(parseInt(form.duration_minutes) / 60)).padStart(2, '0')}:${String(parseInt(form.duration_minutes) % 60).padStart(2, '0')}:00.000Z`
 
     try {
-      await runService.logRun({
+      const res = await runService.logRun({
         user_id: user.id,
         run_name: form.run_name || `Run ${new Date(form.run_date).toLocaleDateString()}`,
         distance_km: parseFloat(form.distance_km),
@@ -83,6 +83,7 @@ export default function LogRun() {
         run_date: dateTime,
         description: form.description || null,
       })
+      if (res.eco_points != null) updateEcoPoints(res.eco_points)
       setSuccess({ points: Math.round(parseFloat(form.distance_km) * 10), km: parseFloat(form.distance_km) })
     } catch {
       setErrors({ submit: 'Could not save your run. Try again.' })

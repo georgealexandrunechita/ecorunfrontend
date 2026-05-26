@@ -1,12 +1,13 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, Target, Plus, Map, LogOut } from 'lucide-react'
+import { LayoutDashboard, Target, Plus, Map, Trophy, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
 const TABS = [
   { to: '/dashboard',  icon: LayoutDashboard, label: 'Home' },
   { to: '/challenges', icon: Target,          label: 'Challenges' },
   { to: '/map',        icon: Map,             label: 'Map' },
+  { to: '/ranking',    icon: Trophy,          label: 'Ranking' },
 ]
 
 export default function BottomTabBar() {
