@@ -193,24 +193,6 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-dark-600" />
-            <span className="text-xs text-gray-700 font-medium">Or</span>
-            <div className="flex-1 h-px bg-dark-600" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {['Google', 'Facebook'].map((provider) => (
-              <button
-                key={provider}
-                type="button"
-                className="flex items-center justify-center gap-2 bg-dark-700/80 hover:bg-dark-600 border border-dark-500 hover:border-dark-400 text-gray-400 hover:text-gray-200 text-sm font-medium py-3 rounded-xl transition-all duration-200 active:scale-95"
-              >
-                {provider}
-              </button>
-            ))}
-          </div>
-
           <p className="text-center text-sm text-gray-600 mt-6">
             Don't have an account?{' '}
             <Link to="/register" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
